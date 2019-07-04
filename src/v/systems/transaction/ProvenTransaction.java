@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ProvenTransaction extends Transaction implements BytesSerializable {
+public abstract class ProvenTransaction extends Transaction implements BytesSerializable, JsonSerializable {
     protected ArrayList<Proof> proofs;
     protected Long feeCharged;
     protected Short feeScale;

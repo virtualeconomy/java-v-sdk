@@ -7,6 +7,15 @@ public abstract class Transaction {
     protected Integer height;
     protected String status;
 
+    // According to "Cold and Hot Wallet Interaction Specification 2.0"
+    // https://github.com/virtualeconomy/rfcs/blob/master/text/0003-wallet-interaction-specification-2.md
+    public static int getColdSignAPIVersion(Long amount) {
+        if (amount % 100 == 0) {
+            return 1;
+        }
+        return amount > 9007199254740991L ? 2 : 1;
+    }
+
     public String getId() {
         return id;
     }
