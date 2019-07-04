@@ -1,8 +1,20 @@
 package v.systems.transaction;
 
+import v.systems.type.TransactionType;
+
 public class LeaseCancelTransaction extends ProvenTransaction {
-    private String leaseId;
-    private LeaseTransaction lease;
+    public final String[] SERIALIZED_FIELDS = {"fee", "feeScale", "timestamp", "leaseId"};
+    protected String leaseId;
+    protected LeaseTransaction lease;
+
+    public LeaseCancelTransaction() {
+        type = TransactionType.CancelLease.getTypeId();
+    }
+
+    @Override
+    protected String[] getSerializedFields() {
+        return SERIALIZED_FIELDS;
+    }
 
     public String getLeaseId() {
         return leaseId;

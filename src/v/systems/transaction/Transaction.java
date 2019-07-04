@@ -1,11 +1,11 @@
 package v.systems.transaction;
 
 public abstract class Transaction {
-    private String id;
-    private Integer type;
-    private Long timestamp;
-    private Integer height;
-    private String status;
+    protected String id;
+    protected Byte type;
+    protected Long timestamp;
+    protected Integer height;
+    protected String status;
 
     public String getId() {
         return id;
@@ -15,11 +15,11 @@ public abstract class Transaction {
         this.id = id;
     }
 
-    public Integer getType() {
+    public Byte getType() {
         return type;
     }
 
-    public void setType(Integer transactionType) {
+    public void setType(Byte transactionType) {
         this.type = transactionType;
     }
 
