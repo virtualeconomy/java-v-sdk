@@ -1,5 +1,7 @@
 package v.systems.utils;
 
+import org.bitcoinj.core.Base58;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -29,6 +31,22 @@ public class BytesHelper {
 
     public static byte[] toBytes(String x) {
         return x.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] serializeBase58(String base58Str) {
+        return Base58.decode(base58Str);
+    }
+
+    public static byte[] serializeBase58WithSize(String base58Str, int byteLengthOfSize) {
+        byte[] b58decode = Base58.decode(base58Str);
+        byte[] intSizeBytes = toBytes(b58decode.length);
+        byte[] sizeBytes = new byte[byteLengthOfSize];
+        for (int i = 1; i <= byteLengthOfSize; i++) {
+            int destOffset = byteLengthOfSize - i;
+            int srcOffset = Integer.BYTES - i;
+            sizeBytes[destOffset] = srcOffset >= 0 ? intSizeBytes[srcOffset] : 0;
+        }
+        return concat(sizeBytes, b58decode);
     }
 
     public static String toHex(byte[] bytes) {

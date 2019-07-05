@@ -1,58 +1,25 @@
 package v.systems.transaction;
 
-public abstract class Transaction {
-    protected String id;
-    protected Byte type;
-    protected Long timestamp;
-    protected Integer height;
-    protected String status;
+public interface Transaction {
 
-    // According to "Cold and Hot Wallet Interaction Specification 2.0"
-    // https://github.com/virtualeconomy/rfcs/blob/master/text/0003-wallet-interaction-specification-2.md
-    public static int getColdSignAPIVersion(Long amount) {
-        if (amount % 100 == 0) {
-            return 1;
-        }
-        return amount > 9007199254740991L ? 2 : 1;
-    }
+    String getId();
 
-    public String getId() {
-        return id;
-    }
+    void setId(String id);
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    Byte getType();
 
-    public Byte getType() {
-        return type;
-    }
+    void setType(Byte type);
 
-    public void setType(Byte transactionType) {
-        this.type = transactionType;
-    }
+    Long getTimestamp();
 
-    public Long getTimestamp() {
-        return timestamp;
-    }
+    void setTimestamp(Long timestamp);
 
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
-    }
+    Integer getHeight();
 
-    public Integer getHeight() {
-        return height;
-    }
+    void setHeight(Integer height);
 
-    public void setHeight(Integer height) {
-        this.height = height;
-    }
+    String getStatus();
 
-    public String getStatus() {
-        return status;
-    }
+    void setStatus(String status);
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

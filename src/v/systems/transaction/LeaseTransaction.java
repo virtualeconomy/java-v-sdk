@@ -1,13 +1,13 @@
 package v.systems.transaction;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import v.systems.type.Base58Field;
 import v.systems.type.TransactionType;
-import v.systems.utils.JsonHelper;
 
 public class LeaseTransaction extends ProvenTransaction {
-    public final String[] SERIALIZED_FIELDS = {"recipient", "amount", "fee", "feeScale", "timestamp"};
+    public final String[] BYTE_SERIALIZED_FIELDS = {"recipient", "amount", "fee", "feeScale", "timestamp"};
     @Base58Field
     protected String recipient;
     protected Long amount;
@@ -18,57 +18,36 @@ public class LeaseTransaction extends ProvenTransaction {
 
     @Override
     public JsonElement toAPIRequestJson(String publicKey, String signature) throws JsonSyntaxException {
-        String jsonTemplate = "{" +
-                "  \"timestamp\": %d," +
-                "  \"amount\": %d," +
-                "  \"fee\": %d," +
-                "  \"feeScale\": %d," +
-                "  \"recipient\": \"%s\"," +
-                "  \"senderPublicKey\": \"%s\"," +
-                "  \"signature\": \"%s\"" +
-                "}";
-        String json = String.format(
-                jsonTemplate,
-                this.timestamp,
-                this.amount,
-                this.fee,
-                this.feeScale,
-                this.recipient,
-                publicKey,
-                signature);
-        return JsonHelper.getParserInstance().parse(json);
+        JsonObject json = new JsonObject();
+        json.addProperty("timestamp", this.timestamp);
+        json.addProperty("amount", this.amount);
+        json.addProperty("fee", this.fee);
+        json.addProperty("feeScale", this.feeScale);
+        json.addProperty("recipient", this.recipient);
+        json.addProperty("senderPublicKey", publicKey);
+        json.addProperty("signature", signature);
+        return json;
     }
 
     @Override
     public JsonElement toColdSignJson(String publicKey) throws JsonSyntaxException {
-        String jsonTemplate = "{" +
-                "  \"protocol\":\"v.systems\"," +
-                "  \"api\":%d," +
-                "  \"opc\":\"transaction\"," +
-                "  \"transactionType\":%d," +
-                "  \"senderPublicKey\":\"%s\"," +
-                "  \"amount\":%d," +
-                "  \"fee\":%d," +
-                "  \"feeScale\":%d," +
-                "  \"recipient\":\"%s\"," +
-                "  \"timestamp\":%d" +
-                "}";
-        String json = String.format(
-                jsonTemplate,
-                getColdSignAPIVersion(this.amount),
-                this.type,
-                publicKey,
-                this.amount,
-                this.fee,
-                this.feeScale,
-                this.recipient,
-                this.timestamp);
-        return JsonHelper.getParserInstance().parse(json);
+        JsonObject json = new JsonObject();
+        json.addProperty("protocol", "v.systems");
+        json.addProperty("api", getColdSignAPIVersion(this.amount));
+        json.addProperty("opc", "transaction");
+        json.addProperty("transactionType", this.type);
+        json.addProperty("senderPublicKey", publicKey);
+        json.addProperty("amount", this.amount);
+        json.addProperty("fee", this.fee);
+        json.addProperty("feeScale", this.feeScale);
+        json.addProperty("recipient", this.recipient);
+        json.addProperty("timestamp", this.timestamp);
+        return json;
     }
 
     @Override
-    protected String[] getSerializedFields() {
-        return SERIALIZED_FIELDS;
+    protected String[] getByteSerializedFields() {
+        return BYTE_SERIALIZED_FIELDS;
     }
 
     public String getRecipient() {
