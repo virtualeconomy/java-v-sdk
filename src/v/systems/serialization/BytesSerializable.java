@@ -1,7 +1,9 @@
 package v.systems.serialization;
 
-import java.util.ArrayList;
+import v.systems.error.SerializationError;
+
+import java.util.List;
 
 public interface BytesSerializable {
-    ArrayList<Byte> toBytes();
+    List<Byte> toBytes() throws SerializationError;
 }

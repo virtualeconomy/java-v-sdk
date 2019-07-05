@@ -6,17 +6,17 @@ public enum TransactionType {
     CancelLease(4),
     Minting(5);
 
-    private final int typeId;
+    private final byte typeId;
 
     private TransactionType(int id) {
-        typeId = id;
+        typeId = (byte) id;
     }
 
     public boolean equals(Integer id) {
         return id != null && id.equals(typeId);
     }
 
-    public final int getTypeId() {
+    public final byte getTypeId() {
         return typeId;
     }
 

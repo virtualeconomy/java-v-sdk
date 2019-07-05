@@ -1,8 +1,8 @@
 package v.systems.transaction;
 
-public class MintingTransaction extends Transaction {
-    private String recipient;
-    private Long amount;
+public class MintingTransaction extends BasicTransaction {
+    protected String recipient;
+    protected Long amount;
 
     public String getRecipient() {
         return recipient;

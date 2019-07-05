@@ -4,7 +4,7 @@ import com.google.gson.*;
 import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
 import v.systems.entity.Block;
-import v.systems.error.VException;
+import v.systems.error.ApiError;
 import v.systems.transaction.Transaction;
 import v.systems.transaction.TransactionParser;
 import v.systems.type.NetworkType;
@@ -29,25 +29,25 @@ public class Blockchain {
         parser = JsonHelper.getParserInstance();
     }
 
-    public Long getBalance(String address) throws IOException, VException {
+    public Long getBalance(String address) throws IOException, ApiError {
         String url = String.format("%s/addresses/balance/%s", nodeUrl, address);
         Balance balance = this.callChainAPI(url, Balance.class);
         return balance.getBalance();
     }
 
-    public BalanceDetail getBalanceDetail(String address) throws IOException, VException {
+    public BalanceDetail getBalanceDetail(String address) throws IOException, ApiError {
         String url = String.format("%s/addresses/balance/details/%s", nodeUrl, address);
         return this.callChainAPI(url, BalanceDetail.class);
     }
 
-    public List<Transaction> getTransactionHistory(String address, int num) throws IOException, VException {
+    public List<Transaction> getTransactionHistory(String address, int num) throws IOException, ApiError {
         String url = String.format("%s/transactions/address/%s/limit/%d", nodeUrl, address, num);
         String json = HttpClient.get(url);
         List<Transaction> result = new ArrayList<Transaction>();
         try {
             JsonElement jsonElement = parser.parse(json);
             if (!jsonElement.isJsonArray()) {
-                throw new VException(json);
+                throw new ApiError(json);
             }
             JsonArray jsonArray = jsonElement.getAsJsonArray();
             if (jsonArray.size() == 0) {
@@ -55,7 +55,7 @@ public class Blockchain {
             }
             jsonElement = jsonArray.get(0);
             if (!jsonElement.isJsonArray()) {
-                throw new VException(json);
+                throw new ApiError(json);
             }
             jsonArray = jsonElement.getAsJsonArray();
             for (int i = 0; i < jsonArray.size(); i++) {
@@ -64,55 +64,55 @@ public class Blockchain {
             }
 
         } catch (JsonSyntaxException ex) {
-            throw VException.fromJson(json);
+            throw ApiError.fromJson(json);
         }
         return result;
     }
 
-    public Transaction getTransactionById(String txId) throws IOException, VException {
+    public Transaction getTransactionById(String txId) throws IOException, ApiError {
         String url = String.format("%s/transactions/info/%s", nodeUrl, txId);
         String json = HttpClient.get(url);
         try {
             return TransactionParser.parse(json);
         } catch (JsonSyntaxException ex) {
-            throw VException.fromJson(json);
+            throw ApiError.fromJson(json);
         }
     }
 
-    public Transaction getUnconfirmedTransactionById(String txId) throws IOException, VException {
+    public Transaction getUnconfirmedTransactionById(String txId) throws IOException, ApiError {
         String url = String.format("%s/transactions/unconfirmed/info/%s", nodeUrl, txId);
         String json = HttpClient.get(url);
         try {
             return TransactionParser.parse(json);
         } catch (JsonSyntaxException ex) {
-            throw VException.fromJson(json);
+            throw ApiError.fromJson(json);
         }
     }
 
-    public Integer getHeight() throws IOException, VException {
+    public Integer getHeight() throws IOException, ApiError {
         String url = String.format("%s/blocks/height", nodeUrl);
         String json = HttpClient.get(url);
         try {
             JsonElement jsonElement = parser.parse(json);
             if (!jsonElement.isJsonObject()) {
-                throw new VException(json);
+                throw new ApiError(json);
             }
             JsonObject jsonObj = jsonElement.getAsJsonObject();
             JsonElement heightElement = jsonObj.get("height");
             if (heightElement == null) {
-                throw VException.fromJson(json);
+                throw ApiError.fromJson(json);
             }
             return heightElement.getAsInt();
         } catch (JsonSyntaxException ex) {
-            throw VException.fromJson(json);
+            throw ApiError.fromJson(json);
         }
     }
 
-    public Block getLastBlock() throws IOException, VException {
+    public Block getLastBlock() throws IOException, ApiError {
         String url = String.format("%s/blocks/last", nodeUrl);
         return this.callChainAPI(url, Block.class);
     }
-    public Block getBlockByHeight(int height) throws IOException, VException  {
+    public Block getBlockByHeight(int height) throws IOException, ApiError  {
         String url = String.format("%s/blocks/at/%d", nodeUrl, height);
         return this.callChainAPI(url, Block.class);
     }
@@ -123,12 +123,12 @@ public class Blockchain {
     // getContractInfo(String contractId)
     // getContractContent(String contractId)
 
-    private <T> T callChainAPI(String url, Class<T> classType) throws IOException, VException {
+    private <T> T callChainAPI(String url, Class<T> classType) throws IOException, ApiError {
         String json = HttpClient.get(url);
         try {
             return gson.fromJson(json, classType);
         } catch (JsonSyntaxException ex) {
-            throw VException.fromJson(json);
+            throw ApiError.fromJson(json);
         }
     }
 

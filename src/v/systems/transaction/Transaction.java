@@ -1,49 +1,25 @@
 package v.systems.transaction;
 
-public abstract class Transaction {
-    private String id;
-    private Integer type;
-    private Long timestamp;
-    private Integer height;
-    private String status;
+public interface Transaction {
 
-    public String getId() {
-        return id;
-    }
+    String getId();
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    void setId(String id);
 
-    public Integer getType() {
-        return type;
-    }
+    Byte getType();
 
-    public void setType(Integer transactionType) {
-        this.type = transactionType;
-    }
+    void setType(Byte type);
 
-    public Long getTimestamp() {
-        return timestamp;
-    }
+    Long getTimestamp();
 
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
-    }
+    void setTimestamp(Long timestamp);
 
-    public Integer getHeight() {
-        return height;
-    }
+    Integer getHeight();
 
-    public void setHeight(Integer height) {
-        this.height = height;
-    }
+    void setHeight(Integer height);
 
-    public String getStatus() {
-        return status;
-    }
+    String getStatus();
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    void setStatus(String status);
+
 }
