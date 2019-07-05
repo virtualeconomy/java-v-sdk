@@ -17,28 +17,15 @@ public class LeaseCancelTransaction extends ProvenTransaction {
 
     @Override
     public JsonElement toAPIRequestJson(String publicKey, String signature) throws JsonSyntaxException {
-        JsonObject json = new JsonObject();
-        json.addProperty("timestamp", this.timestamp);
+        JsonObject json = super.toAPIRequestJson(publicKey, signature).getAsJsonObject();
         json.addProperty("txId", this.leaseId);
-        json.addProperty("fee", this.fee);
-        json.addProperty("feeScale", this.feeScale);
-        json.addProperty("senderPublicKey", publicKey);
-        json.addProperty("signature", signature);
         return json;
     }
 
     @Override
     public JsonElement toColdSignJson(String publicKey) throws JsonSyntaxException {
-        JsonObject json = new JsonObject();
-        json.addProperty("protocol", "v.systems");
-        json.addProperty("api", 1);
-        json.addProperty("opc", "transaction");
-        json.addProperty("transactionType", this.type);
-        json.addProperty("senderPublicKey", publicKey);
+        JsonObject json = super.toColdSignJson(publicKey).getAsJsonObject();
         json.addProperty("txId", this.leaseId);
-        json.addProperty("fee", this.fee);
-        json.addProperty("feeScale", this.feeScale);
-        json.addProperty("timestamp", this.timestamp);
         return json;
     }
 

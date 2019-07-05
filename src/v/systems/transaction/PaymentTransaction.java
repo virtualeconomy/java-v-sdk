@@ -21,32 +21,20 @@ public class PaymentTransaction extends ProvenTransaction {
     }
 
     @Override
-    public JsonElement toAPIRequestJson(String publicKey, String signature) throws JsonSyntaxException {
-        JsonObject json = new JsonObject();
-        json.addProperty("timestamp", this.timestamp);
+    public JsonElement toAPIRequestJson(String publicKey, String signature) {
+        JsonObject json = super.toAPIRequestJson(publicKey, signature).getAsJsonObject();
         json.addProperty("amount", this.amount);
-        json.addProperty("fee", this.fee);
-        json.addProperty("feeScale", this.feeScale);
         json.addProperty("recipient", this.recipient);
-        json.addProperty("senderPublicKey", publicKey);
         json.addProperty("attachment", this.attachment);
-        json.addProperty("signature", signature);
         return json;
     }
 
     @Override
-    public JsonElement toColdSignJson(String publicKey) throws JsonSyntaxException {
-        JsonObject json = new JsonObject();
-        json.addProperty("protocol", "v.systems");
-        json.addProperty("api", getColdSignAPIVersion(this.amount));
-        json.addProperty("opc", "transaction");
-        json.addProperty("transactionType", this.type);
-        json.addProperty("senderPublicKey", publicKey);
+    public JsonElement toColdSignJson(String publicKey) {
+        int api = getColdSignAPIVersion(this.amount);
+        JsonObject json = super.toColdSignJson(publicKey, api).getAsJsonObject();
         json.addProperty("amount", this.amount);
-        json.addProperty("fee", this.fee);
-        json.addProperty("feeScale", this.feeScale);
         json.addProperty("recipient", this.recipient);
-        json.addProperty("timestamp", this.timestamp);
         json.addProperty("attachment", this.attachment);
         return json;
     }
