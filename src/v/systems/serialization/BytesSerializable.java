@@ -5,5 +5,6 @@ import v.systems.error.SerializationError;
 import java.util.List;
 
 public interface BytesSerializable {
-    List<Byte> toBytes() throws SerializationError;
+    byte[] toBytes() throws SerializationError;
+    List<Byte> toByteList() throws SerializationError;
 }

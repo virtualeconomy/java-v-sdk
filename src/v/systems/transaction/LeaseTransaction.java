@@ -7,7 +7,7 @@ import v.systems.type.Base58Field;
 import v.systems.type.TransactionType;
 
 public class LeaseTransaction extends ProvenTransaction {
-    public final String[] BYTE_SERIALIZED_FIELDS = {"recipient", "amount", "fee", "feeScale", "timestamp"};
+    public final String[] BYTE_SERIALIZED_FIELDS = {"type", "recipient", "amount", "fee", "feeScale", "timestamp"};
     @Base58Field
     protected String recipient;
     protected Long amount;

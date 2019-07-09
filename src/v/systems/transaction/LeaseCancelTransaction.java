@@ -3,11 +3,12 @@ package v.systems.transaction;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import v.systems.type.Base58Field;
 import v.systems.type.TransactionType;
-import v.systems.utils.JsonHelper;
 
 public class LeaseCancelTransaction extends ProvenTransaction {
-    public final String[] BYTE_SERIALIZED_FIELDS = {"fee", "feeScale", "timestamp", "leaseId"};
+    public final String[] BYTE_SERIALIZED_FIELDS = {"type", "fee", "feeScale", "timestamp", "leaseId"};
+    @Base58Field
     protected String leaseId;
     protected LeaseTransaction lease;
 
