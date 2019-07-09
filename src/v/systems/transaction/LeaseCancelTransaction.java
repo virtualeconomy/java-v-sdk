@@ -2,7 +2,6 @@ package v.systems.transaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import v.systems.type.Base58Field;
 import v.systems.type.TransactionType;
 
@@ -17,14 +16,14 @@ public class LeaseCancelTransaction extends ProvenTransaction {
     }
 
     @Override
-    public JsonElement toAPIRequestJson(String publicKey, String signature) throws JsonSyntaxException {
+    public JsonElement toAPIRequestJson(String publicKey, String signature) {
         JsonObject json = super.toAPIRequestJson(publicKey, signature).getAsJsonObject();
         json.addProperty("txId", this.leaseId);
         return json;
     }
 
     @Override
-    public JsonElement toColdSignJson(String publicKey) throws JsonSyntaxException {
+    public JsonElement toColdSignJson(String publicKey) {
         JsonObject json = super.toColdSignJson(publicKey).getAsJsonObject();
         json.addProperty("txId", this.leaseId);
         return json;

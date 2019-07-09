@@ -5,6 +5,7 @@ import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
 import v.systems.entity.Block;
 import v.systems.error.ApiError;
+import v.systems.error.TransactionError;
 import v.systems.transaction.*;
 import v.systems.type.NetworkType;
 import v.systems.type.TransactionType;
@@ -76,7 +77,7 @@ public class Blockchain {
         try {
             return TransactionParser.parse(json);
         } catch (Exception ex) {
-            throw ApiError.fromJson(json);
+            throw ApiError.fromJson(json, TransactionError.class);
         }
     }
 
@@ -86,7 +87,7 @@ public class Blockchain {
         try {
             return TransactionParser.parse(json);
         } catch (Exception ex) {
-            throw ApiError.fromJson(json);
+            throw ApiError.fromJson(json, TransactionError.class);
         }
     }
 

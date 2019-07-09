@@ -1,6 +1,5 @@
 package v.systems.error;
 
-import com.google.gson.JsonSyntaxException;
 import v.systems.utils.JsonHelper;
 
 public class ApiError extends VException {
@@ -24,13 +23,17 @@ public class ApiError extends VException {
         this.error = error;
     }
 
-
     public static ApiError fromJson(String json) {
-        ApiError result;
+        return fromJson(json, ApiError.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends ApiError> T fromJson(String json, Class<T> classType) {
+        T result;
         try {
-            result = JsonHelper.getGsonInstance().fromJson(json, ApiError.class);
-        } catch (JsonSyntaxException ex) {
-            result = new ApiError(json);
+            result = JsonHelper.getGsonInstance().fromJson(json, classType);
+        } catch (Exception ex) {
+            result = (T) new ApiError(json);
         }
         return result;
     }

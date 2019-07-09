@@ -10,14 +10,12 @@ import v.systems.error.KeyError;
 import v.systems.error.SerializationError;
 import v.systems.serialization.BytesSerializable;
 import v.systems.transaction.ProvenTransaction;
-import v.systems.transaction.Transaction;
 import v.systems.type.NetworkType;
 import v.systems.type.TransactionType;
 import v.systems.utils.Hash;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
