@@ -18,6 +18,7 @@ import java.util.List;
 
 public class Blockchain {
     public static final long V_UNITY = 100000000L;
+    public static final int TX_MAX_LIMIT = 20000;
 
     private NetworkType network;
     private String nodeUrl;
@@ -43,9 +44,15 @@ public class Blockchain {
     }
 
     public List<Transaction> getTransactionHistory(String address, int num) throws IOException, ApiError {
+        List<Transaction> result = new ArrayList<Transaction>();
+        if (num <= 0) {
+            return result;
+        }
+        if (num > TX_MAX_LIMIT) {
+            num = TX_MAX_LIMIT;
+        }
         String url = String.format("%s/transactions/address/%s/limit/%d", nodeUrl, address, num);
         String json = HttpClient.get(url);
-        List<Transaction> result = new ArrayList<Transaction>();
         try {
             JsonElement jsonElement = parser.parse(json);
             if (!jsonElement.isJsonArray()) {

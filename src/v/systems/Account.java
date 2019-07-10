@@ -10,6 +10,7 @@ import v.systems.error.KeyError;
 import v.systems.error.SerializationError;
 import v.systems.serialization.BytesSerializable;
 import v.systems.transaction.ProvenTransaction;
+import v.systems.transaction.Transaction;
 import v.systems.type.NetworkType;
 import v.systems.type.TransactionType;
 import v.systems.utils.Hash;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 
 public class Account {
     private static final Curve25519 cipher = Curve25519.getInstance(Curve25519.BEST);
@@ -88,6 +90,10 @@ public class Account {
 
     public BalanceDetail getBalanceDetail(Blockchain chain) throws KeyError, IOException, ApiError {
         return chain.getBalanceDetail(this.getAddress());
+    }
+
+    public List<Transaction> getTransactionHistory(Blockchain chain, int num) throws KeyError, IOException, ApiError {
+        return chain.getTransactionHistory(this.getAddress(), num);
     }
 
     public String getPrivateKey() throws KeyError {
