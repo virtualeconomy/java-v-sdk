@@ -2,7 +2,6 @@ package v.systems.transaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import v.systems.entity.Proof;
 import v.systems.serialization.JsonSerializable;
 

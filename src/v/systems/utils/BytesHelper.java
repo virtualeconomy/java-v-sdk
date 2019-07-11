@@ -49,6 +49,14 @@ public class BytesHelper {
         return concat(sizeBytes, b58decode);
     }
 
+    public static byte[] toBytes(List<Byte> list) {
+        byte[] bytes = new byte[list.size()];
+        for (int i = 0 ; i < list.size(); i++) {
+            bytes[i] = list.get(i);
+        }
+        return bytes;
+    }
+
     public static String toHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {

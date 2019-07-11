@@ -1,6 +1,5 @@
 package v.systems.transaction;
 
-import org.bitcoinj.core.Base58;
 import v.systems.error.SerializationError;
 import v.systems.serialization.BytesSerializable;
 import v.systems.type.Base58Field;
@@ -14,8 +13,11 @@ public abstract class BytesSerializableTransaction extends BasicTransaction impl
 
     protected abstract String[] getByteSerializedFields();
 
+    public byte[] toBytes() throws SerializationError {
+        return BytesHelper.toBytes(toByteList());
+    }
 
-    public List<Byte> toBytes() throws SerializationError {
+    public List<Byte> toByteList() throws SerializationError {
         List<Byte> result = new ArrayList<Byte>();
         for (String fieldName : getByteSerializedFields()) {
             Field field = null;

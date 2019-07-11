@@ -102,7 +102,7 @@ Java library for V Systems
 1. Send Payment transaction
 
     ```java
-    Long amount = Blockchain.toMinimumUnit(1.0);  // Send 1.0 V coin
+    Long amount = 1 * Blockchain.V_UNITY;  // Send 1.0 V coin
     PaymentTransaction tx = TransactionFactory.buildPaymentTx("<recipient address>", amount);
     
     // Usage 1: for hot wallet sending transaction
@@ -115,7 +115,7 @@ Java library for V Systems
 2. Send Lease transaction
 
     ```java
-    Long amount = Blockchain.toMinimumUnit(1.0);  // Lease 1.0 V coin
+    Long amount = 1 * Blockchain.V_UNITY;  // Lease 1.0 V coin
     LeaseTransaction tx = TransactionFactory.buildLeaseTx("<recipient address>", amount);
     
     // Usage 1: for hot wallet sending transaction

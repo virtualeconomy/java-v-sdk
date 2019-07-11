@@ -5,9 +5,10 @@ import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
 import v.systems.entity.Block;
 import v.systems.error.ApiError;
-import v.systems.transaction.Transaction;
-import v.systems.transaction.TransactionParser;
+import v.systems.error.TransactionError;
+import v.systems.transaction.*;
 import v.systems.type.NetworkType;
+import v.systems.type.TransactionType;
 import v.systems.utils.HttpClient;
 import v.systems.utils.JsonHelper;
 
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Blockchain {
+    public static final long V_UNITY = 100000000L;
+    public static final int TX_MAX_LIMIT = 10000;
 
     private NetworkType network;
     private String nodeUrl;
@@ -41,9 +44,15 @@ public class Blockchain {
     }
 
     public List<Transaction> getTransactionHistory(String address, int num) throws IOException, ApiError {
+        List<Transaction> result = new ArrayList<Transaction>();
+        if (num <= 0) {
+            return result;
+        }
+        if (num > TX_MAX_LIMIT) {
+            num = TX_MAX_LIMIT;
+        }
         String url = String.format("%s/transactions/address/%s/limit/%d", nodeUrl, address, num);
         String json = HttpClient.get(url);
-        List<Transaction> result = new ArrayList<Transaction>();
         try {
             JsonElement jsonElement = parser.parse(json);
             if (!jsonElement.isJsonArray()) {
@@ -63,7 +72,7 @@ public class Blockchain {
                 result.add(tx);
             }
 
-        } catch (JsonSyntaxException ex) {
+        } catch (Exception ex) {
             throw ApiError.fromJson(json);
         }
         return result;
@@ -74,8 +83,8 @@ public class Blockchain {
         String json = HttpClient.get(url);
         try {
             return TransactionParser.parse(json);
-        } catch (JsonSyntaxException ex) {
-            throw ApiError.fromJson(json);
+        } catch (Exception ex) {
+            throw ApiError.fromJson(json, TransactionError.class);
         }
     }
 
@@ -84,8 +93,25 @@ public class Blockchain {
         String json = HttpClient.get(url);
         try {
             return TransactionParser.parse(json);
-        } catch (JsonSyntaxException ex) {
-            throw ApiError.fromJson(json);
+        } catch (Exception ex) {
+            throw ApiError.fromJson(json, TransactionError.class);
+        }
+    }
+
+    public ProvenTransaction sendTransaction(TransactionType txType, String json) throws IOException, ApiError {
+        String url;
+        switch (txType) {
+            case Payment:
+                url = String.format("%s/vsys/broadcast/payment", nodeUrl);
+                return this.callChainAPI(url, json, PaymentTransaction.class);
+            case Lease:
+                url = String.format("%s/leasing/broadcast/lease", nodeUrl);
+                return this.callChainAPI(url, json, LeaseTransaction.class);
+            case CancelLease:
+                url = String.format("%s/leasing/broadcast/cancel", nodeUrl);
+                return this.callChainAPI(url, json, LeaseCancelTransaction.class);
+            default:
+                throw new ApiError("Unsupported Transaction Type");
         }
     }
 
@@ -103,7 +129,7 @@ public class Blockchain {
                 throw ApiError.fromJson(json);
             }
             return heightElement.getAsInt();
-        } catch (JsonSyntaxException ex) {
+        } catch (Exception ex) {
             throw ApiError.fromJson(json);
         }
     }
@@ -125,9 +151,28 @@ public class Blockchain {
 
     private <T> T callChainAPI(String url, Class<T> classType) throws IOException, ApiError {
         String json = HttpClient.get(url);
+        return parseResponse(classType, json);
+    }
+
+    private <T> T callChainAPI(String url, String jsonData, Class<T> classType) throws IOException, ApiError {
+        String json = HttpClient.post(url, jsonData);
+        return parseResponse(classType, json);
+    }
+
+    private <T> T parseResponse(Class<T> classType, String json) throws ApiError {
         try {
-            return gson.fromJson(json, classType);
-        } catch (JsonSyntaxException ex) {
+            JsonElement jsonElement = parser.parse(json);
+            if (jsonElement.isJsonObject()) {
+                JsonObject jsonObj = jsonElement.getAsJsonObject();
+                if (jsonObj.get("error") != null) {
+                    throw ApiError.fromJson(json);
+                } else {
+                    return gson.fromJson(jsonElement, classType);
+                }
+            } else {
+                return gson.fromJson(json, classType);
+            }
+        } catch (Exception ex) {
             throw ApiError.fromJson(json);
         }
     }
