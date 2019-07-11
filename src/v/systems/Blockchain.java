@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Blockchain {
     public static final long V_UNITY = 100000000L;
-    public static final int TX_MAX_LIMIT = 20000;
+    public static final int TX_MAX_LIMIT = 10000;
 
     private NetworkType network;
     private String nodeUrl;
@@ -141,10 +141,6 @@ public class Blockchain {
     public Block getBlockByHeight(int height) throws IOException, ApiError  {
         String url = String.format("%s/blocks/at/%d", nodeUrl, height);
         return this.callChainAPI(url, Block.class);
-    }
-
-    public static long toMinimumUnit(double amount) {
-        return new Double(V_UNITY * amount).longValue();
     }
 
     //TODO: implement these functions later

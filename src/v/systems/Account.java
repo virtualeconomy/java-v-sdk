@@ -1,6 +1,7 @@
 package v.systems;
 
 import com.google.gson.JsonElement;
+import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.java.curve_sigs;
@@ -62,6 +63,9 @@ public class Account {
             address = getAddress(publicKey, network.toByte());
         } else {
             address = Base58.decode(base58Address);
+            if (!checkAddress()) {
+                throw new AddressFormatException("invalid address");
+            }
         }
     }
 
@@ -131,5 +135,33 @@ public class Account {
         byte[] checksum = Hash.secureHash(buf.array(), 0, 22);
         buf.put(checksum, 0, 4);
         return buf.array();
+    }
+
+    public boolean checkAddress() {
+        return checkAddress(this.network, this.address);
+    }
+
+    public static boolean checkAddress(NetworkType network, String base58Address) {
+        try {
+            return checkAddress(network, Base58.decode(base58Address));
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    public static boolean checkAddress(NetworkType network, byte[] address) {
+        if (address.length != 26 || address[0] != ADDR_VERSION || address[1] != network.toByte()) {
+            return false;
+        }
+        ByteBuffer buf = ByteBuffer.allocate(22);
+        buf.put(address, 22, 4);
+        byte[] expectedChecksum = buf.array();
+        byte[] actualChecksum = Hash.secureHash(address, 0, 22);
+        for (int i = 0; i < 4; i++) {
+            if (expectedChecksum[i] != actualChecksum[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
