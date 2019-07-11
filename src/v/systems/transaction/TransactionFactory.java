@@ -12,7 +12,7 @@ public class TransactionFactory {
     }
 
     public static PaymentTransaction buildPaymentTx(String recipient, Long amount, String attachment) {
-        return buildPaymentTx(recipient, amount, attachment, null);
+        return buildPaymentTx(recipient, amount, attachment, getCurrentTime());
     }
 
     public static PaymentTransaction buildPaymentTx(String recipient, Long amount, String attachment, Long timestamp) {
@@ -26,7 +26,7 @@ public class TransactionFactory {
     }
 
     public static LeaseTransaction buildLeaseTx(String recipient, Long amount) {
-        return buildLeaseTx(recipient, amount, null);
+        return buildLeaseTx(recipient, amount, getCurrentTime());
     }
 
     public static LeaseTransaction buildLeaseTx(String recipient, Long amount, Long timestamp) {
@@ -39,7 +39,7 @@ public class TransactionFactory {
     }
 
     public static LeaseCancelTransaction buildCancelLeasingTx(String leaseId) {
-        return buildCancelLeasingTx(leaseId, null);
+        return buildCancelLeasingTx(leaseId, getCurrentTime());
     }
 
     public static LeaseCancelTransaction buildCancelLeasingTx(String leaseId, Long timestamp) {
@@ -52,12 +52,15 @@ public class TransactionFactory {
 
     private static void setCommonField(ProvenTransaction tx) {
         if (tx.getTimestamp() == null) {
-            long timestamp = new Date().getTime() * 1000000L; // to nano seconds
-            tx.setTimestamp(timestamp);
+            tx.setTimestamp(getCurrentTime());
         }
         if (tx.getFee() == null) {
             tx.setFee(DEFAULT_TX_FEE);
         }
         tx.setFeeScale(DEFAULT_FEE_SCALE);
+    }
+
+    private static long getCurrentTime() {
+        return new Date().getTime() * 1000000L; // to nano seconds
     }
 }
