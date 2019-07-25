@@ -104,6 +104,7 @@ Java library for V Systems
     ```java
     Long amount = 1 * Blockchain.V_UNITY;  // Send 1.0 V coin
     PaymentTransaction tx = TransactionFactory.buildPaymentTx("<recipient address>", amount);
+    String txId = tx.getId(); // get Tx ID offline
     
     // Usage 1: for hot wallet sending transaction
     Transaction result = acc.sendTransaction(chain, tx);
@@ -117,6 +118,7 @@ Java library for V Systems
     ```java
     Long amount = 1 * Blockchain.V_UNITY;  // Lease 1.0 V coin
     LeaseTransaction tx = TransactionFactory.buildLeaseTx("<recipient address>", amount);
+    String txId = tx.getId(); // get Tx ID offline
     
     // Usage 1: for hot wallet sending transaction
     Transaction result = acc.sendTransaction(chain, tx);

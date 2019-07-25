@@ -37,7 +37,7 @@ public class Account {
             seed = nonce.toString() + seed;
         }
         byte[] seedBytes = seed.getBytes(StandardCharsets.UTF_8);
-        byte[] accountSeed = Hash.secureHash(seedBytes, 0, seedBytes.length);
+        byte[] accountSeed = Hash.secureHash(seedBytes);
         byte[] hashedSeed = Hash.sha256(accountSeed, 0, accountSeed.length);
         privateKey = Arrays.copyOf(hashedSeed, 32);
         privateKey[0] &= 248;
@@ -130,7 +130,7 @@ public class Account {
 
     public static byte[] getAddress(byte[] publicKey, byte networkByte) {
         ByteBuffer buf = ByteBuffer.allocate(26);
-        byte[] hash = Hash.secureHash(publicKey, 0, publicKey.length);
+        byte[] hash = Hash.secureHash(publicKey);
         buf.put(ADDR_VERSION).put(networkByte).put(hash, 0, 20);
         byte[] checksum = Hash.secureHash(buf.array(), 0, 22);
         buf.put(checksum, 0, 4);

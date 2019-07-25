@@ -11,13 +11,24 @@ public class Hash {
     private static final ThreadLocal<Digest> KECCAK256 = new ThreadLocal<Digest>();
     private static final ThreadLocal<Digest> SHA256 = new ThreadLocal<Digest>();
 
+    public static byte[] secureHash(byte[] message) {
+        return secureHash(message, 0, message.length);
+    }
     public static byte[] secureHash(byte[] message, int ofs, int len) {
         final byte[] blake2b = hash(message, ofs, len, Hash.BLAKE2B256);
         return hash(blake2b, 0, blake2b.length, Hash.KECCAK256);
     }
 
+    public static byte[] blake2b(byte[] message) {
+        return blake2b(message, 0, message.length);
+    }
+
     public static byte[] blake2b(byte[] message, int ofs, int len) {
         return hash(message, ofs, len, Hash.BLAKE2B256);
+    }
+
+    public static byte[] sha256(byte[] message) {
+        return sha256(message, 0, message.length);
     }
 
     public static byte[] sha256(byte[] message, int ofs, int len) {

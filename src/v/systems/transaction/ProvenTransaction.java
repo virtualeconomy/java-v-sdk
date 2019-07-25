@@ -2,8 +2,11 @@ package v.systems.transaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.bitcoinj.core.Base58;
 import v.systems.entity.Proof;
+import v.systems.error.SerializationError;
 import v.systems.serialization.JsonSerializable;
+import v.systems.utils.Hash;
 
 import java.util.ArrayList;
 
@@ -12,6 +15,19 @@ public abstract class ProvenTransaction extends BytesSerializableTransaction imp
     protected Long feeCharged;
     protected Short feeScale;
     protected Long fee;
+
+    @Override
+    public String getId() {
+        if (id == null) {
+            try {
+                byte[] idBytes = Hash.blake2b(this.toBytes());
+                id = Base58.encode(idBytes);
+            } catch (SerializationError serializationError) {
+                return null;
+            }
+        }
+        return id;
+    }
 
     @Override
     public JsonElement toAPIRequestJson(String publicKey, String signature) {
