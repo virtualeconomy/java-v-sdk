@@ -30,7 +30,7 @@ public class TransactionParser {
             case Lease:
                 tx = gson.fromJson(json, LeaseTransaction.class);
                 break;
-            case CancelLease:
+            case LeaseCancel:
                 tx = gson.fromJson(json, LeaseCancelTransaction.class);
                 break;
             case Minting:

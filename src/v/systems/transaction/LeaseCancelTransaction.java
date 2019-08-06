@@ -12,7 +12,7 @@ public class LeaseCancelTransaction extends ProvenTransaction {
     protected LeaseTransaction lease;
 
     public LeaseCancelTransaction() {
-        type = TransactionType.CancelLease.getTypeId();
+        type = TransactionType.LeaseCancel.getTypeId();
     }
 
     @Override
