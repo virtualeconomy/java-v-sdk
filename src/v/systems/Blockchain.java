@@ -4,6 +4,7 @@ import com.google.gson.*;
 import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
 import v.systems.entity.Block;
+import v.systems.entity.SlotInfo;
 import v.systems.error.ApiError;
 import v.systems.error.TransactionError;
 import v.systems.transaction.*;
@@ -18,7 +19,6 @@ import java.util.List;
 
 public class Blockchain {
     public static final long V_UNITY = 100000000L;
-    public static final int TX_MAX_LIMIT = 10000;
 
     private NetworkType network;
     private String nodeUrl;
@@ -43,15 +43,21 @@ public class Blockchain {
         return this.callChainAPI(url, BalanceDetail.class);
     }
 
+    public List<Transaction> getActiveLeaseTransactions(String address) throws IOException, ApiError {
+        String url = String.format("%s/transactions/activeLeaseList/%s", nodeUrl, address);
+        return this.getTransactionByUrl(url);
+    }
+
     public List<Transaction> getTransactionHistory(String address, int num) throws IOException, ApiError {
-        List<Transaction> result = new ArrayList<Transaction>();
         if (num <= 0) {
-            return result;
-        }
-        if (num > TX_MAX_LIMIT) {
-            num = TX_MAX_LIMIT;
+            return new ArrayList<Transaction>();
         }
         String url = String.format("%s/transactions/address/%s/limit/%d", nodeUrl, address, num);
+        return this.getTransactionByUrl(url);
+    }
+
+    private List<Transaction> getTransactionByUrl(String url) throws IOException, ApiError {
+        List<Transaction> result = new ArrayList<Transaction>();
         String json = HttpClient.get(url);
         try {
             JsonElement jsonElement = parser.parse(json);
@@ -110,6 +116,12 @@ public class Blockchain {
             case LeaseCancel:
                 url = String.format("%s/leasing/broadcast/cancel", nodeUrl);
                 return this.callChainAPI(url, json, LeaseCancelTransaction.class);
+            case ContendSlot:
+                url = String.format("%s/spos/broadcast/contend", nodeUrl);
+                return this.callChainAPI(url, json, ContendSlotTransaction.class);
+            case ReleaseSlot:
+                url = String.format("%s/spos/broadcast/release", nodeUrl);
+                return this.callChainAPI(url, json, ReleaseSlotTransaction.class);
             default:
                 throw new ApiError("Unsupported Transaction Type");
         }
@@ -138,9 +150,35 @@ public class Blockchain {
         String url = String.format("%s/blocks/last", nodeUrl);
         return this.callChainAPI(url, Block.class);
     }
+
     public Block getBlockByHeight(int height) throws IOException, ApiError  {
         String url = String.format("%s/blocks/at/%d", nodeUrl, height);
         return this.callChainAPI(url, Block.class);
+    }
+
+    public SlotInfo getSlotInfo(int slotId) throws IOException, ApiError {
+        String url = String.format("%s/consensus/slotInfo/%d", nodeUrl, slotId);
+        return this.callChainAPI(url, SlotInfo.class);
+    }
+
+    public List<SlotInfo> getAllSlotInfo() throws IOException, ApiError {
+        String url = String.format("%s/consensus/allSlotsInfo", nodeUrl);
+        String json = HttpClient.get(url);
+        List<SlotInfo> result = new ArrayList<SlotInfo>();
+        try {
+            JsonElement jsonElement = parser.parse(json);
+            if (!jsonElement.isJsonArray()) {
+                throw new ApiError(json);
+            }
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                SlotInfo info = gson.fromJson(jsonArray.get(i), SlotInfo.class);
+                result.add(info);
+            }
+        } catch (Exception ex) {
+            throw ApiError.fromJson(json);
+        }
+        return result;
     }
 
     //TODO: implement these functions later

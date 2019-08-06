@@ -36,6 +36,10 @@ public class TransactionParser {
             case Minting:
                 tx = gson.fromJson(json, MintingTransaction.class);
                 break;
+            case ContendSlot:
+                tx = gson.fromJson(json, ContendSlotTransaction.class);
+            case ReleaseSlot:
+                tx = gson.fromJson(json, ReleaseSlotTransaction.class);
         }
         return tx;
     }

@@ -4,7 +4,9 @@ public enum TransactionType {
     Payment(2),
     Lease(3),
     LeaseCancel(4),
-    Minting(5);
+    Minting(5),
+    ContendSlot(6),
+    ReleaseSlot(7);
 
     private final byte typeId;
 

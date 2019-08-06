@@ -4,8 +4,9 @@ import java.util.Date;
 
 public class TransactionFactory {
 
-    private static final long DEFAULT_TX_FEE = 10000000L;
-    private static final short DEFAULT_FEE_SCALE = 100;
+    public static final long DEFAULT_TX_FEE = 10000000L;
+    public static final long CONTEND_TX_FEE = 50000 * 100000000L;
+    public static final short DEFAULT_FEE_SCALE = 100;
 
     public static PaymentTransaction buildPaymentTx(String recipient, Long amount) {
         return buildPaymentTx(recipient, amount, "");
@@ -46,6 +47,21 @@ public class TransactionFactory {
         LeaseCancelTransaction tx = new LeaseCancelTransaction();
         tx.setLeaseId(leaseId);
         tx.setTimestamp(timestamp);
+        setCommonField(tx);
+        return tx;
+    }
+
+    public static ContendSlotTransaction buildContendSlotTx(Integer slotId) {
+        ContendSlotTransaction tx = new ContendSlotTransaction();
+        tx.setSlotId(slotId);
+        tx.setFee(CONTEND_TX_FEE);
+        setCommonField(tx);
+        return tx;
+    }
+
+    public static ReleaseSlotTransaction buildReleaseSlotTx(Integer slotId) {
+        ReleaseSlotTransaction tx = new ReleaseSlotTransaction();
+        tx.setSlotId(slotId);
         setCommonField(tx);
         return tx;
     }
