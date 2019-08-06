@@ -107,7 +107,7 @@ public class Blockchain {
             case Lease:
                 url = String.format("%s/leasing/broadcast/lease", nodeUrl);
                 return this.callChainAPI(url, json, LeaseTransaction.class);
-            case CancelLease:
+            case LeaseCancel:
                 url = String.format("%s/leasing/broadcast/cancel", nodeUrl);
                 return this.callChainAPI(url, json, LeaseCancelTransaction.class);
             default:
