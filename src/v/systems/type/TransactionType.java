@@ -32,6 +32,10 @@ public enum TransactionType {
                 return LeaseCancel;
             case 5:
                 return Minting;
+            case 6:
+                return ContendSlot;
+            case 7:
+                return ReleaseSlot;
         }
         return null;
     }
