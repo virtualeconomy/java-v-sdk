@@ -103,9 +103,14 @@ public class Account {
     }
 
     public Result checkContend(Blockchain chain, int slotId) {
+        int slotGap = this.network == NetworkType.Mainnet ? 4 : 1;
+        return checkContend(chain, slotId, slotGap);
+    }
+
+    public Result checkContend(Blockchain chain, int slotId, int slotGap) {
         try {
-            if (0 > slotId || slotId > 60) {
-                return Result.fail("Insufficient balance for sending contend!");
+            if (0 > slotId || slotId >= 60 || slotId % slotGap != 0) {
+                return Result.fail("Invalid slot ID");
             }
             BalanceDetail balance = chain.getBalanceDetail(this.getAddress());
             if (balance.getAvailable() < TransactionFactory.CONTEND_TX_FEE) {
