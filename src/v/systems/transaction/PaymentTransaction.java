@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.bitcoinj.core.Base58;
 import v.systems.type.Base58Field;
+import v.systems.type.SerializedWithSize;
 import v.systems.type.TransactionType;
 
 public class PaymentTransaction extends ProvenTransaction {
@@ -11,7 +12,8 @@ public class PaymentTransaction extends ProvenTransaction {
     @Base58Field
     protected String recipient;
     protected Long amount;
-    @Base58Field(isFixedLength = false)
+    @Base58Field
+    @SerializedWithSize
     protected String attachment;
 
     public PaymentTransaction() {

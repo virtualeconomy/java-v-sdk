@@ -6,7 +6,9 @@ public enum TransactionType {
     LeaseCancel(4),
     Minting(5),
     ContendSlot(6),
-    ReleaseSlot(7);
+    ReleaseSlot(7),
+    RegisterContract(8),
+    ExecuteContractFunction(9);
 
     private final byte typeId;
 
@@ -36,6 +38,10 @@ public enum TransactionType {
                 return ContendSlot;
             case 7:
                 return ReleaseSlot;
+            case 8:
+                return RegisterContract;
+            case 9:
+                return ExecuteContractFunction;
         }
         return null;
     }

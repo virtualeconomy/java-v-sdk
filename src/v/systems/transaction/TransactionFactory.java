@@ -1,12 +1,24 @@
 package v.systems.transaction;
 
+import org.bitcoinj.core.Base58;
+import v.systems.contract.Contract;
+import v.systems.contract.ContractFactory;
+import v.systems.contract.DataEntry;
+import v.systems.contract.FunctionData;
+import v.systems.error.SerializationError;
+
 import java.util.Date;
 
 public class TransactionFactory {
 
     public static final long DEFAULT_TX_FEE = 10000000L;
     public static final long CONTEND_TX_FEE = 50000 * 100000000L;
+    public static final long REG_CONTRACT_TX_FEE = 100 * 100000000L;
+    public static final long EXEC_CONTRACT_TX_FEE = 30000000L;
     public static final short DEFAULT_FEE_SCALE = 100;
+
+    private static final short SEND_TOKEN_FUNC_INDEX = 3;
+    private static final short SEND_TOKEN_FUNC_INDEX_SPLIT = 4;
 
     public static PaymentTransaction buildPaymentTx(String recipient, Long amount) {
         return buildPaymentTx(recipient, amount, "");
@@ -62,6 +74,62 @@ public class TransactionFactory {
     public static ReleaseSlotTransaction buildReleaseSlotTx(Integer slotId) {
         ReleaseSlotTransaction tx = new ReleaseSlotTransaction();
         tx.setSlotId(slotId);
+        setCommonField(tx);
+        return tx;
+    }
+
+    public static RegisterContractTransaction buildRegisterTokenTx(Long max, Long unity, boolean isSplitSupported, String tokenDescription, String contractDescription) throws SerializationError {
+        Contract contract = ContractFactory.createToken(isSplitSupported);
+        FunctionData data = new FunctionData();
+        data.add(DataEntry.amount(max));
+        data.add(DataEntry.amount(unity));
+        data.add(DataEntry.shortText(tokenDescription));
+        return buildRegisterContractTx(contract, data, contractDescription);
+    }
+
+    public static RegisterContractTransaction buildRegisterContractTx(Contract contract, FunctionData data, String description) throws SerializationError {
+        return buildRegisterContractTx(contract, data, description, getCurrentTime());
+    }
+
+    public static RegisterContractTransaction buildRegisterContractTx(Contract contract, FunctionData data, String description, Long timestamp) throws SerializationError {
+        RegisterContractTransaction tx = new RegisterContractTransaction();
+        tx.setContract(contract);
+        tx.setInitData(Base58.encode(data.toBytes()));
+        tx.setDescription(description);
+        tx.setFee(REG_CONTRACT_TX_FEE);
+        tx.setTimestamp(timestamp);
+        setCommonField(tx);
+        return tx;
+    }
+
+    public static ExecuteContractFunctionTransaction buildSendTokenTx(String tokenId, boolean isSplitSupported, String recipient, Long amount) throws SerializationError {
+        return buildSendTokenTx(tokenId, isSplitSupported, recipient, amount, "");
+    }
+
+    public static ExecuteContractFunctionTransaction buildSendTokenTx(String tokenId, boolean isSplitSupported, String recipient, Long amount, String attachment) throws SerializationError {
+        short functionIndex = isSplitSupported ? SEND_TOKEN_FUNC_INDEX_SPLIT : SEND_TOKEN_FUNC_INDEX;
+        FunctionData data = new FunctionData();
+        data.add(DataEntry.address(recipient));
+        data.add(DataEntry.amount(amount));
+        return buildExecContractFuncTx(tokenId, functionIndex, data, attachment);
+    }
+
+    public static ExecuteContractFunctionTransaction buildExecContractFuncTx(String contractId, Short functionIndex, FunctionData data) throws SerializationError {
+        return buildExecContractFuncTx(contractId, functionIndex, data, "");
+    }
+
+    public static ExecuteContractFunctionTransaction buildExecContractFuncTx(String contractId, Short functionIndex, FunctionData data, String attachment) throws SerializationError {
+        return buildExecContractFuncTx(contractId, functionIndex, data, attachment, getCurrentTime());
+    }
+
+    public static ExecuteContractFunctionTransaction buildExecContractFuncTx(String contractId, Short functionIndex, FunctionData data, String attachment, Long timestamp) throws SerializationError {
+        ExecuteContractFunctionTransaction tx = new ExecuteContractFunctionTransaction();
+        tx.setContractId(contractId);
+        tx.setFunctionIndex(functionIndex);
+        tx.setFunctionData(Base58.encode(data.toBytes()));
+        tx.setAttachment(attachment);
+        tx.setFee(EXEC_CONTRACT_TX_FEE);
+        tx.setTimestamp(timestamp);
         setCommonField(tx);
         return tx;
     }
