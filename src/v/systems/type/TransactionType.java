@@ -3,8 +3,10 @@ package v.systems.type;
 public enum TransactionType {
     Payment(2),
     Lease(3),
-    CancelLease(4),
-    Minting(5);
+    LeaseCancel(4),
+    Minting(5),
+    ContendSlot(6),
+    ReleaseSlot(7);
 
     private final byte typeId;
 
@@ -27,9 +29,13 @@ public enum TransactionType {
             case 3:
                 return Lease;
             case 4:
-                return CancelLease;
+                return LeaseCancel;
             case 5:
                 return Minting;
+            case 6:
+                return ContendSlot;
+            case 7:
+                return ReleaseSlot;
         }
         return null;
     }
