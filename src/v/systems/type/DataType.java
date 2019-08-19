@@ -39,4 +39,22 @@ public enum DataType {
         }
         return null;
     }
+
+    public static DataType parse(String type) {
+        switch (type) {
+            case "PublicKey":
+                return PublicKey;
+            case "Address":
+                return Address;
+            case "Amount":
+                return Amount;
+            case "Int32":
+                return Int32;
+            case "ShortText":
+                return ShortText;
+            case "ContractAccount":
+                return ContractAccount;
+        }
+        return null;
+    }
 }

@@ -1,7 +1,13 @@
 package v.systems.transaction;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.bitcoinj.core.Base58;
+import v.systems.Account;
 import v.systems.contract.Contract;
+import v.systems.error.SerializationError;
 import v.systems.type.Base58Field;
+import v.systems.type.NetworkType;
 import v.systems.type.SerializedWithSize;
 import v.systems.type.TransactionType;
 
@@ -19,6 +25,33 @@ public class RegisterContractTransaction extends ProvenTransaction {
 
     public RegisterContractTransaction() {
         type = TransactionType.RegisterContract.getTypeId();
+    }
+
+    @Override
+    public JsonElement toAPIRequestJson(String publicKey, String signature) {
+        JsonObject json = super.toAPIRequestJson(publicKey, signature).getAsJsonObject();
+        try {
+            json.addProperty("contract", Base58.encode(contract.toBytes()));
+            json.addProperty("initData", initData);
+            json.addProperty("description",description);
+        } catch (SerializationError ex) {
+            throw new RuntimeException("Cannot generate JSON. " + ex.getMessage());
+        }
+        return json;
+    }
+
+    @Override
+    public JsonElement toColdSignJson(String publicKey, NetworkType type) {
+        JsonObject json = super.toColdSignJson(publicKey, type, 3).getAsJsonObject();
+        try {
+            json.addProperty("address",Account.getAddress(publicKey, type.toByte()));
+            json.addProperty("contract", Base58.encode(contract.toBytes()));
+            json.addProperty("contractInit", initData);
+            json.addProperty("description",description);
+        } catch (SerializationError ex) {
+            throw new RuntimeException("Cannot generate JSON. " + ex.getMessage());
+        }
+        return json;
     }
 
     @Override

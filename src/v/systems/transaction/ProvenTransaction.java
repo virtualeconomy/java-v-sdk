@@ -6,6 +6,7 @@ import org.bitcoinj.core.Base58;
 import v.systems.entity.Proof;
 import v.systems.error.SerializationError;
 import v.systems.serialization.JsonSerializable;
+import v.systems.type.NetworkType;
 import v.systems.utils.Hash;
 
 import java.util.ArrayList;
@@ -41,11 +42,11 @@ public abstract class ProvenTransaction extends BytesSerializableTransaction imp
     }
 
     @Override
-    public JsonElement toColdSignJson(String publicKey) {
-        return toColdSignJson(publicKey, 1);
+    public JsonElement toColdSignJson(String publicKey, NetworkType type) {
+        return toColdSignJson(publicKey, type,1);
     }
 
-    public JsonElement toColdSignJson(String publicKey, int ApiVersion) {
+    public JsonElement toColdSignJson(String publicKey, NetworkType type, int ApiVersion) {
         JsonObject json = new JsonObject();
         json.addProperty("protocol", "v.systems");
         json.addProperty("api", ApiVersion);

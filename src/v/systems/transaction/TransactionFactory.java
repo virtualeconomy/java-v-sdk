@@ -1,10 +1,7 @@
 package v.systems.transaction;
 
 import org.bitcoinj.core.Base58;
-import v.systems.contract.Contract;
-import v.systems.contract.ContractFactory;
-import v.systems.contract.DataEntry;
-import v.systems.contract.FunctionData;
+import v.systems.contract.*;
 import v.systems.error.SerializationError;
 
 import java.util.Date;
@@ -111,7 +108,8 @@ public class TransactionFactory {
         FunctionData data = new FunctionData();
         data.add(DataEntry.address(recipient));
         data.add(DataEntry.amount(amount));
-        return buildExecContractFuncTx(tokenId, functionIndex, data, attachment);
+        String contractId = TokenInfo.getContractId(tokenId);
+        return buildExecContractFuncTx(contractId, functionIndex, data, attachment);
     }
 
     public static ExecuteContractFunctionTransaction buildExecContractFuncTx(String contractId, Short functionIndex, FunctionData data) throws SerializationError {

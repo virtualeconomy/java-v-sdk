@@ -3,6 +3,7 @@ package v.systems.transaction;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import v.systems.type.Base58Field;
+import v.systems.type.NetworkType;
 import v.systems.type.TransactionType;
 
 public class LeaseCancelTransaction extends ProvenTransaction {
@@ -23,8 +24,8 @@ public class LeaseCancelTransaction extends ProvenTransaction {
     }
 
     @Override
-    public JsonElement toColdSignJson(String publicKey) {
-        JsonObject json = super.toColdSignJson(publicKey).getAsJsonObject();
+    public JsonElement toColdSignJson(String publicKey, NetworkType type) {
+        JsonObject json = super.toColdSignJson(publicKey, type).getAsJsonObject();
         json.addProperty("txId", this.leaseId);
         return json;
     }

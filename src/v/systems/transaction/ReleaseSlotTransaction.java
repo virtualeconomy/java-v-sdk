@@ -2,6 +2,7 @@ package v.systems.transaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import v.systems.type.NetworkType;
 import v.systems.type.TransactionType;
 
 public class ReleaseSlotTransaction extends ProvenTransaction {
@@ -21,8 +22,8 @@ public class ReleaseSlotTransaction extends ProvenTransaction {
     }
 
     @Override
-    public JsonElement toColdSignJson(String publicKey) {
-        JsonObject json = super.toColdSignJson(publicKey, 1).getAsJsonObject();
+    public JsonElement toColdSignJson(String publicKey, NetworkType type) {
+        JsonObject json = super.toColdSignJson(publicKey, type, 1).getAsJsonObject();
         json.addProperty("slotId", this.getSlotId());
         return json;
     }

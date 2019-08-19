@@ -13,8 +13,7 @@ public class FunctionData extends ArrayList<DataEntry> implements BytesSerializa
         byte[] result = BytesHelper.toBytes((short)this.size());
         for (DataEntry item : this) {
             byte[] bytes = item.toBytes();
-            byte[] len = BytesHelper.toBytes((short)bytes.length);
-            result = BytesHelper.concat(new byte[][]{result, len, bytes});
+            result = BytesHelper.concat(result, bytes);
         }
         return result;
     }

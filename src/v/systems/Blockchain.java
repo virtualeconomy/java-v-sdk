@@ -1,6 +1,11 @@
 package v.systems;
 
 import com.google.gson.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import v.systems.contract.Contract;
+import v.systems.contract.ContractInfo;
+import v.systems.contract.TokenBalance;
+import v.systems.contract.TokenInfo;
 import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
 import v.systems.entity.Block;
@@ -122,6 +127,12 @@ public class Blockchain {
             case ReleaseSlot:
                 url = String.format("%s/spos/broadcast/release", nodeUrl);
                 return this.callChainAPI(url, json, ReleaseSlotTransaction.class);
+            case RegisterContract:
+                url = String.format("%s/contract/broadcast/register", nodeUrl);
+                return this.callChainAPI(url, json, RegisterContractTransaction.class);
+            case ExecuteContractFunction:
+                url = String.format("%s/contract/broadcast/execute", nodeUrl);
+                return this.callChainAPI(url, json, ExecuteContractFunctionTransaction.class);
             default:
                 throw new ApiError("Unsupported Transaction Type");
         }
@@ -181,11 +192,31 @@ public class Blockchain {
         return result;
     }
 
-    //TODO: implement these functions later
-    // getTokenInfo(String tokenId)
-    // getTokenBalance(String address, String tokenId)
-    // getContractInfo(String contractId)
-    // getContractContent(String contractId)
+    public TokenInfo getTokenInfo(String tokenId) throws IOException, ApiError {
+        String url = String.format("%s/contract/tokenInfo/%s", nodeUrl, tokenId);
+        return this.callChainAPI(url, TokenInfo.class);
+    }
+
+    public boolean doesTokenSupportSplit(String tokenId) throws IOException, ApiError {
+        String contractId = TokenInfo.getContractId(tokenId);
+        ContractInfo contractInfo = this.getContractInfo(contractId);
+        return contractInfo.getType().equals("TokenContractWithSplit");
+    }
+
+    public TokenBalance getTokenBalance(String address, String tokenId) throws IOException, ApiError {
+        String url = String.format("%s/contract/balance/%s/%s", nodeUrl, address, tokenId);
+        return this.callChainAPI(url, TokenBalance.class);
+    }
+
+    public ContractInfo getContractInfo(String contractId) throws IOException, ApiError {
+        String url = String.format("%s/contract/info/%s", nodeUrl, contractId);
+        return this.callChainAPI(url, ContractInfo.class);
+    }
+
+    public Contract getContractContent(String contractId) throws IOException, ApiError {
+        String url = String.format("%s/contract/content/%s", nodeUrl, contractId);
+        return this.callChainAPI(url, Contract.class);
+    }
 
     private <T> T callChainAPI(String url, Class<T> classType) throws IOException, ApiError {
         String json = HttpClient.get(url);
