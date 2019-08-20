@@ -4,6 +4,7 @@ public class Proof {
     private String proofType;
     private String publicKey;
     private String signature;
+    private String address;
 
     public String getProofType() {
         return proofType;
@@ -27,5 +28,13 @@ public class Proof {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

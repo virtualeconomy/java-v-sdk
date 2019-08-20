@@ -12,7 +12,7 @@ public class Block {
     private String generator;
     private String signature;
     private Long fee;
-    private Long blocksize;
+    private Integer blocksize;
     private Integer height;
 
     public Integer getVersion() {
@@ -87,11 +87,11 @@ public class Block {
         this.fee = fee;
     }
 
-    public Long getBlocksize() {
+    public Integer getBlocksize() {
         return blocksize;
     }
 
-    public void setBlocksize(Long blocksize) {
+    public void setBlocksize(Integer blocksize) {
         this.blocksize = blocksize;
     }
 

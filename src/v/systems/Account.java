@@ -6,12 +6,14 @@ import org.bitcoinj.core.Base58;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.java.curve_sigs;
 import v.systems.entity.BalanceDetail;
+import v.systems.entity.Result;
+import v.systems.entity.SlotInfo;
 import v.systems.error.ApiError;
 import v.systems.error.KeyError;
 import v.systems.error.SerializationError;
+import v.systems.error.VException;
 import v.systems.serialization.BytesSerializable;
-import v.systems.transaction.ProvenTransaction;
-import v.systems.transaction.Transaction;
+import v.systems.transaction.*;
 import v.systems.type.NetworkType;
 import v.systems.type.TransactionType;
 import v.systems.utils.Hash;
@@ -98,6 +100,48 @@ public class Account {
 
     public List<Transaction> getTransactionHistory(Blockchain chain, int num) throws KeyError, IOException, ApiError {
         return chain.getTransactionHistory(this.getAddress(), num);
+    }
+
+    public Result checkContend(Blockchain chain, int slotId) {
+        int slotGap = this.network == NetworkType.Mainnet ? 4 : 1;
+        return checkContend(chain, slotId, slotGap);
+    }
+
+    public Result checkContend(Blockchain chain, int slotId, int slotGap) {
+        try {
+            if (0 > slotId || slotId >= 60 || slotId % slotGap != 0) {
+                return Result.fail("Invalid slot ID");
+            }
+            BalanceDetail balance = chain.getBalanceDetail(this.getAddress());
+            if (balance.getAvailable() < TransactionFactory.CONTEND_TX_FEE) {
+                return Result.fail("Insufficient balance for sending contend!");
+            }
+            Long minEffectiveBalance = ContendSlotTransaction.MIN_EFFECTIVE_BALANCE + TransactionFactory.CONTEND_TX_FEE;
+            if (balance.getEffective() < minEffectiveBalance) {
+                return Result.fail(String.format("The effective balance must greater than %d!", minEffectiveBalance));
+            }
+            SlotInfo slotInfo = chain.getSlotInfo(slotId);
+            if (balance.getMintingAverage() <= slotInfo.getMintingAverageBalance()) {
+                return Result.fail("The minting average balance of target slot is greater than or equals to yours.");
+            }
+            return Result.success();
+        } catch (Exception ex) {
+            return Result.fail(ex.getMessage());
+        }
+    }
+
+    public Transaction contendSlot(Blockchain chain, int slotId) throws VException, IOException {
+        Result result = checkContend(chain, slotId);
+        if (!result.isOk()) {
+            throw new VException(result.getMessage());
+        }
+        ContendSlotTransaction tx = TransactionFactory.buildContendSlotTx(slotId);
+        return this.sendTransaction(chain, tx);
+    }
+
+    public Transaction releaseSlot(Blockchain chain, int slotId) throws VException, IOException {
+        ReleaseSlotTransaction tx = TransactionFactory.buildReleaseSlotTx(slotId);
+        return this.sendTransaction(chain, tx);
     }
 
     public String getPrivateKey() throws KeyError {
