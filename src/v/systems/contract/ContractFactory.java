@@ -4,12 +4,14 @@ import org.bitcoinj.core.Base58;
 
 public class ContractFactory {
 
-    public static Contract createToken(boolean isSplitSupported) {
-        if (isSplitSupported) {
-            return createTokenWithSplit();
-        } else {
-            return createTokenWithoutSplit();
+    public static Contract createToken(ContractType type) {
+        switch (type) {
+            case Token:
+                return createTokenWithoutSplit();
+            case TokenWithSplit:
+                return createTokenWithSplit();
         }
+        return null;
     }
 
     private static Contract createTokenWithSplit() {

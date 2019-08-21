@@ -75,8 +75,8 @@ public class TransactionFactory {
         return tx;
     }
 
-    public static RegisterContractTransaction buildRegisterTokenTx(Long max, Long unity, boolean isSplitSupported, String tokenDescription, String contractDescription) throws SerializationError {
-        Contract contract = ContractFactory.createToken(isSplitSupported);
+    public static RegisterContractTransaction buildRegisterTokenTx(ContractType type, Long max, Long unity, String tokenDescription, String contractDescription) throws SerializationError {
+        Contract contract = ContractFactory.createToken(type);
         FunctionData data = new FunctionData();
         data.add(DataEntry.amount(max));
         data.add(DataEntry.amount(unity));
@@ -99,12 +99,12 @@ public class TransactionFactory {
         return tx;
     }
 
-    public static ExecuteContractFunctionTransaction buildSendTokenTx(String tokenId, boolean isSplitSupported, String recipient, Long amount) throws SerializationError {
-        return buildSendTokenTx(tokenId, isSplitSupported, recipient, amount, "");
+    public static ExecuteContractFunctionTransaction buildSendTokenTx(String tokenId, ContractType type, String recipient, Long amount) throws SerializationError {
+        return buildSendTokenTx(tokenId, type, recipient, amount, "");
     }
 
-    public static ExecuteContractFunctionTransaction buildSendTokenTx(String tokenId, boolean isSplitSupported, String recipient, Long amount, String attachment) throws SerializationError {
-        short functionIndex = isSplitSupported ? SEND_TOKEN_FUNC_INDEX_SPLIT : SEND_TOKEN_FUNC_INDEX;
+    public static ExecuteContractFunctionTransaction buildSendTokenTx(String tokenId, ContractType type, String recipient, Long amount, String attachment) throws SerializationError {
+        short functionIndex = type == ContractType.TokenWithSplit ? SEND_TOKEN_FUNC_INDEX_SPLIT : SEND_TOKEN_FUNC_INDEX;
         FunctionData data = new FunctionData();
         data.add(DataEntry.address(recipient));
         data.add(DataEntry.amount(amount));

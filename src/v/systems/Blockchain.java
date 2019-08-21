@@ -2,10 +2,7 @@ package v.systems;
 
 import com.google.gson.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import v.systems.contract.Contract;
-import v.systems.contract.ContractInfo;
-import v.systems.contract.TokenBalance;
-import v.systems.contract.TokenInfo;
+import v.systems.contract.*;
 import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
 import v.systems.entity.Block;
@@ -197,10 +194,10 @@ public class Blockchain {
         return this.callChainAPI(url, TokenInfo.class);
     }
 
-    public boolean doesTokenSupportSplit(String tokenId) throws IOException, ApiError {
+    public ContractType getContractTypeByTokenId(String tokenId) throws IOException, ApiError {
         String contractId = TokenInfo.getContractId(tokenId);
         ContractInfo contractInfo = this.getContractInfo(contractId);
-        return contractInfo.getType().equals("TokenContractWithSplit");
+        return contractInfo.getContractType();
     }
 
     public TokenBalance getTokenBalance(String address, String tokenId) throws IOException, ApiError {

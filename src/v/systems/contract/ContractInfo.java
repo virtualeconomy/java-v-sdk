@@ -28,6 +28,10 @@ public class ContractInfo {
         return type;
     }
 
+    public ContractType getContractType() {
+        return ContractType.parse(type);
+    }
+
     public void setType(String type) {
         this.type = type;
     }
