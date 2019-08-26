@@ -11,9 +11,9 @@ public class InfoData {
     private String name;
 
     public DataEntry toDataEntry() {
-        DataEntry obj = new DataEntry();
-        obj.setData(Base58.decode(data));
-        obj.setType(DataType.parse(type));
-        return obj;
+        return DataEntry.builder()
+                .data(Base58.decode(data))
+                .type(DataType.parse(type))
+                .build();
     }
 }
