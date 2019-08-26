@@ -1,5 +1,6 @@
 package v.systems.contract;
 
+import lombok.Data;
 import org.bitcoinj.core.Base58;
 import v.systems.error.SerializationError;
 import v.systems.serialization.BytesSerializable;
@@ -8,6 +9,7 @@ import v.systems.utils.BytesHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class Contract implements BytesSerializable {
     private String languageCode;
     private Integer languageVersion;
@@ -60,53 +62,5 @@ public class Contract implements BytesSerializable {
             result = BytesHelper.concat(new byte[][]{result, len, bytes});
         }
         return result;
-    }
-
-    public String getLanguageCode() {
-        return languageCode;
-    }
-
-    public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
-    }
-
-    public Integer getLanguageVersion() {
-        return languageVersion;
-    }
-
-    public void setLanguageVersion(Integer languageVersion) {
-        this.languageVersion = languageVersion;
-    }
-
-    public List<String> getTriggers() {
-        return triggers;
-    }
-
-    public void setTriggers(List<String> triggers) {
-        this.triggers = triggers;
-    }
-
-    public List<String> getDescriptors() {
-        return descriptors;
-    }
-
-    public void setDescriptors(List<String> descriptors) {
-        this.descriptors = descriptors;
-    }
-
-    public List<String> getStateVariables() {
-        return stateVariables;
-    }
-
-    public void setStateVariables(List<String> stateVariables) {
-        this.stateVariables = stateVariables;
-    }
-
-    public ContractTextual getTextual() {
-        return textual;
-    }
-
-    public void setTextual(ContractTextual textual) {
-        this.textual = textual;
     }
 }

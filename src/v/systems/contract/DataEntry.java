@@ -1,7 +1,8 @@
 package v.systems.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bitcoinj.core.Base58;
-import sun.jvm.hotspot.debugger.Address;
 import v.systems.error.SerializationError;
 import v.systems.serialization.BytesSerializable;
 import v.systems.type.DataType;
@@ -13,7 +14,11 @@ public class DataEntry implements BytesSerializable {
     public final int KEY_LENGTH = 32;
     public final int ADDRESS_LENGTH = 26;
 
+    @Getter
+    @Setter
     private DataType type;
+    @Getter
+    @Setter
     private byte[] data;
 
     @Override
@@ -24,12 +29,12 @@ public class DataEntry implements BytesSerializable {
         if (!verifyLength()) {
             throw new SerializationError("Invalid length of DataEntry");
         }
-        byte[] header = { getType().getTypeId() };
-        if (getType() == DataType.ShortText) {
-            byte[] len = BytesHelper.toBytes((short) getData().length);
+        byte[] header = { type.getTypeId() };
+        if (type == DataType.ShortText) {
+            byte[] len = BytesHelper.toBytes((short) data.length);
             header = BytesHelper.concat(header, len);
         }
-        return BytesHelper.concat(header, getData());
+        return BytesHelper.concat(header, data);
     }
 
     @Override
@@ -60,22 +65,6 @@ public class DataEntry implements BytesSerializable {
 
     public boolean isAccountType() {
         return type == DataType.Address || type == DataType.ContractAccount;
-    }
-
-    public DataType getType() {
-        return type;
-    }
-
-    public void setType(DataType type) {
-        this.type = type;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
     }
 
     public static DataEntry publicKey(String publicKey) {

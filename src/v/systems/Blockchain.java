@@ -1,7 +1,7 @@
 package v.systems;
 
 import com.google.gson.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import lombok.Getter;
 import v.systems.contract.*;
 import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
@@ -21,8 +21,9 @@ import java.util.List;
 
 public class Blockchain {
     public static final long V_UNITY = 100000000L;
-
+    @Getter
     private NetworkType network;
+    @Getter
     private String nodeUrl;
     private Gson gson;
     private JsonParser parser;
@@ -241,13 +242,5 @@ public class Blockchain {
         } catch (Exception ex) {
             throw ApiError.fromJson(json);
         }
-    }
-
-    public NetworkType getNetwork() {
-        return network;
-    }
-
-    public String getNodeUrl() {
-        return nodeUrl;
     }
 }

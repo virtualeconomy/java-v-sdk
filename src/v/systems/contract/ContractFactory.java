@@ -1,7 +1,5 @@
 package v.systems.contract;
 
-import org.bitcoinj.core.Base58;
-
 public class ContractFactory {
 
     public static Contract createToken(ContractType type) {

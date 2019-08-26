@@ -1,11 +1,13 @@
 package v.systems.contract;
 
+import lombok.Data;
 import org.bitcoinj.core.Base58;
 import v.systems.utils.BytesHelper;
 import v.systems.utils.Hash;
 
 import java.util.Arrays;
 
+@Data
 public class TokenInfo {
     private String tokenId;
     private String contractId;
@@ -34,53 +36,5 @@ public class TokenInfo {
         byte[] checkSum = Arrays.copyOfRange(fullCheckSum, 0, 4);
         byte[] tokenIdBytes = BytesHelper.concat(contractIdBytesWithoutCheckSum, checkSum);
         return Base58.encode(tokenIdBytes);
-    }
-
-    public String getTokenId() {
-        return tokenId;
-    }
-
-    public void setTokenId(String tokenId) {
-        this.tokenId = tokenId;
-    }
-
-    public String getContractId() {
-        return contractId;
-    }
-
-    public void setContractId(String contractId) {
-        this.contractId = contractId;
-    }
-
-    public Long getMax() {
-        return max;
-    }
-
-    public void setMax(Long max) {
-        this.max = max;
-    }
-
-    public Long getTotal() {
-        return total;
-    }
-
-    public void setTotal(Long total) {
-        this.total = total;
-    }
-
-    public Long getUnity() {
-        return unity;
-    }
-
-    public void setUnity(Long unity) {
-        this.unity = unity;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

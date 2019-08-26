@@ -2,6 +2,8 @@ package v.systems.transaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.Getter;
+import lombok.Setter;
 import org.bitcoinj.core.Base58;
 import v.systems.entity.Proof;
 import v.systems.error.SerializationError;
@@ -12,9 +14,17 @@ import v.systems.utils.Hash;
 import java.util.ArrayList;
 
 public abstract class ProvenTransaction extends BytesSerializableTransaction implements JsonSerializable {
+    @Getter
+    @Setter
     protected ArrayList<Proof> proofs;
+    @Getter
+    @Setter
     protected Long feeCharged;
+    @Getter
+    @Setter
     protected Short feeScale;
+    @Getter
+    @Setter
     protected Long fee;
 
     @Override
@@ -66,37 +76,5 @@ public abstract class ProvenTransaction extends BytesSerializableTransaction imp
             return 1;
         }
         return amount > 9007199254740991L ? 2 : 1;
-    }
-
-    public ArrayList<Proof> getProofs() {
-        return proofs;
-    }
-
-    public void setProofs(ArrayList<Proof> proofs) {
-        this.proofs = proofs;
-    }
-
-    public Long getFeeCharged() {
-        return feeCharged;
-    }
-
-    public void setFeeCharged(Long feeCharged) {
-        this.feeCharged = feeCharged;
-    }
-
-    public Short getFeeScale() {
-        return feeScale;
-    }
-
-    public void setFeeScale(Short feeScale) {
-        this.feeScale = feeScale;
-    }
-
-    public Long getFee() {
-        return fee;
-    }
-
-    public void setFee(Long fee) {
-        this.fee = fee;
     }
 }

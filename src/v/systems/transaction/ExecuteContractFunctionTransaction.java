@@ -2,6 +2,8 @@ package v.systems.transaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.Getter;
+import lombok.Setter;
 import org.bitcoinj.core.Base58;
 import v.systems.Account;
 import v.systems.error.SerializationError;
@@ -13,12 +15,20 @@ import v.systems.type.TransactionType;
 public class ExecuteContractFunctionTransaction extends ProvenTransaction {
     public final String[] BYTE_SERIALIZED_FIELDS = {"type", "contractId", "functionIndex", "functionData", "attachment", "fee", "feeScale", "timestamp"};
 
+    @Getter
+    @Setter
     @Base58Field
     protected String contractId;
+    @Getter
+    @Setter
     protected Short functionIndex;
+    @Getter
+    @Setter
     @SerializedWithSize
     @Base58Field
     protected String functionData;
+    @Getter
+    @Setter
     @SerializedWithSize
     @Base58Field
     protected String attachment;
@@ -50,38 +60,6 @@ public class ExecuteContractFunctionTransaction extends ProvenTransaction {
     @Override
     protected String[] getByteSerializedFields() {
         return BYTE_SERIALIZED_FIELDS;
-    }
-
-    public String getContractId() {
-        return contractId;
-    }
-
-    public void setContractId(String contractId) {
-        this.contractId = contractId;
-    }
-
-    public Short getFunctionIndex() {
-        return functionIndex;
-    }
-
-    public void setFunctionIndex(Short functionIndex) {
-        this.functionIndex = functionIndex;
-    }
-
-    public String getFunctionData() {
-        return functionData;
-    }
-
-    public void setFunctionData(String functionData) {
-        this.functionData = functionData;
-    }
-
-    public String getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(String attachment) {
-        this.attachment = attachment;
     }
 
     public void setAttachmentWithPlainText(String plainText) {
