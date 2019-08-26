@@ -1,5 +1,6 @@
 package v.systems.contract;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bitcoinj.core.Base58;
@@ -10,6 +11,7 @@ import v.systems.utils.BytesHelper;
 
 import java.util.List;
 
+@Builder
 public class DataEntry implements BytesSerializable {
     public final int KEY_LENGTH = 32;
     public final int ADDRESS_LENGTH = 26;
@@ -68,46 +70,46 @@ public class DataEntry implements BytesSerializable {
     }
 
     public static DataEntry publicKey(String publicKey) {
-        DataEntry dataEntry = new DataEntry();
-        dataEntry.setType(DataType.PublicKey);
-        dataEntry.setData(Base58.decode(publicKey));
-        return dataEntry;
+        return DataEntry.builder()
+                .type(DataType.PublicKey)
+                .data(Base58.decode(publicKey))
+                .build();
     }
 
     public static DataEntry address(String address) {
-        DataEntry dataEntry = new DataEntry();
-        dataEntry.setType(DataType.Address);
-        dataEntry.setData(Base58.decode(address));
-        return dataEntry;
+        return DataEntry.builder()
+                .type(DataType.Address)
+                .data(Base58.decode(address))
+                .build();
     }
 
     public static DataEntry amount(Long amount) {
-        DataEntry dataEntry = new DataEntry();
-        dataEntry.setType(DataType.Amount);
-        dataEntry.setData(BytesHelper.toBytes(amount));
-        return dataEntry;
+        return DataEntry.builder()
+                .type(DataType.Amount)
+                .data(BytesHelper.toBytes(amount))
+                .build();
     }
 
     public static DataEntry int32(Integer int32) {
-        DataEntry dataEntry = new DataEntry();
-        dataEntry.setType(DataType.Int32);
-        dataEntry.setData(BytesHelper.toBytes(int32));
-        return dataEntry;
+        return DataEntry.builder()
+                .type(DataType.Int32)
+                .data(BytesHelper.toBytes(int32))
+                .build();
     }
 
     public static DataEntry shortText(String text) {
-        DataEntry dataEntry = new DataEntry();
-        dataEntry.setType(DataType.ShortText);
         byte[] data = BytesHelper.toBytes(text);
         byte[] len = BytesHelper.toBytes((short)data.length);
-        dataEntry.setData(BytesHelper.concat(len, data));
-        return dataEntry;
+        return DataEntry.builder()
+                .type(DataType.ShortText)
+                .data(BytesHelper.concat(len, data))
+                .build();
     }
 
     public static DataEntry contractAccount(String contractAccount) {
-        DataEntry dataEntry = new DataEntry();
-        dataEntry.setType(DataType.ContractAccount);
-        dataEntry.setData(Base58.decode(contractAccount));
-        return dataEntry;
+        return DataEntry.builder()
+                .type(DataType.ContractAccount)
+                .data(Base58.decode(contractAccount))
+                .build();
     }
 }
