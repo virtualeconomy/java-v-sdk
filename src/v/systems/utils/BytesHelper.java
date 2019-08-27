@@ -1,27 +1,32 @@
 package v.systems.utils;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BytesHelper {
-    public static byte[] toBytes(Long x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        buffer.putLong(x);
-        return buffer.array();
+
+    public static byte[] toBytes(long x) {
+        byte[] result = new byte[8];
+        for (int i = 7; i >= 0; i--,x >>= 8) {
+            result[i] = (byte)(x & 0xFF);
+        }
+        return result;
     }
 
-    public static byte[] toBytes(Integer x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-        buffer.putInt(x);
-        return buffer.array();
+    public static byte[] toBytes(int x) {
+        byte[] result = new byte[4];
+        for (int i = 3; i >= 0; i--,x >>= 8) {
+            result[i] = (byte)(x & 0xFF);
+        }
+        return result;
     }
 
-    public static byte[] toBytes(Short x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
-        buffer.putShort(x);
-        return buffer.array();
+    public static byte[] toBytes(short x) {
+        byte[] result = new byte[2];
+        result[0] = (byte) (x >> 8);
+        result[1] = (byte) x;
+        return result;
     }
 
     public static byte[] toBytes(Byte x) {
