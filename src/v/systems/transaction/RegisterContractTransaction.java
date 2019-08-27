@@ -2,6 +2,8 @@ package v.systems.transaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.Getter;
+import lombok.Setter;
 import org.bitcoinj.core.Base58;
 import v.systems.Account;
 import v.systems.contract.Contract;
@@ -13,13 +15,20 @@ import v.systems.type.TransactionType;
 
 public class RegisterContractTransaction extends ProvenTransaction {
     public final String[] BYTE_SERIALIZED_FIELDS = {"type", "contract", "initData", "description", "fee", "feeScale", "timestamp"};
-
+    @Getter
+    @Setter
     @SerializedWithSize
     protected Contract contract;
+    @Getter
+    @Setter
     private String contractId;
+    @Getter
+    @Setter
     @SerializedWithSize
     @Base58Field
     protected String initData;
+    @Getter
+    @Setter
     @SerializedWithSize
     protected String description;
 
@@ -57,37 +66,5 @@ public class RegisterContractTransaction extends ProvenTransaction {
     @Override
     protected String[] getByteSerializedFields() {
         return BYTE_SERIALIZED_FIELDS;
-    }
-
-    public Contract getContract() {
-        return contract;
-    }
-
-    public void setContract(Contract contract) {
-        this.contract = contract;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getInitData() {
-        return initData;
-    }
-
-    public void setInitData(String initData) {
-        this.initData = initData;
-    }
-
-    public String getContractId() {
-        return contractId;
-    }
-
-    public void setContractId(String contractId) {
-        this.contractId = contractId;
     }
 }

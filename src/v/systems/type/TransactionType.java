@@ -17,7 +17,7 @@ public enum TransactionType {
     }
 
     public boolean equals(Integer id) {
-        return id != null && id.equals(typeId);
+        return id != null && id.equals((int)typeId);
     }
 
     public final byte getTypeId() {

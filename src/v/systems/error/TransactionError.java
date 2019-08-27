@@ -1,10 +1,15 @@
 package v.systems.error;
 
-import v.systems.utils.JsonHelper;
+import lombok.Setter;
+import lombok.Getter;
 
 public class TransactionError extends ApiError {
 
+    @Getter
+    @Setter
     private String status;
+    @Getter
+    @Setter
     private String details;
 
     public TransactionError(String details) {
@@ -15,22 +20,6 @@ public class TransactionError extends ApiError {
         super(details);
         this.details = details;
         this.status = status;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package v.systems.contract;
 
+import lombok.Data;
 import org.bitcoinj.core.Base58;
 import v.systems.error.SerializationError;
 import v.systems.serialization.BytesSerializable;
@@ -7,6 +8,7 @@ import v.systems.utils.BytesHelper;
 
 import java.util.List;
 
+@Data
 public class ContractTextual implements BytesSerializable {
     private String triggers;
     private String descriptors;
@@ -36,29 +38,5 @@ public class ContractTextual implements BytesSerializable {
     @Override
     public List<Byte> toByteList() throws SerializationError {
         return BytesHelper.toList(this.toBytes());
-    }
-
-    public String getTriggers() {
-        return triggers;
-    }
-
-    public void setTriggers(String triggers) {
-        this.triggers = triggers;
-    }
-
-    public String getDescriptors() {
-        return descriptors;
-    }
-
-    public void setDescriptors(String descriptors) {
-        this.descriptors = descriptors;
-    }
-
-    public String getStateVariables() {
-        return stateVariables;
-    }
-
-    public void setStateVariables(String stateVariables) {
-        this.stateVariables = stateVariables;
     }
 }

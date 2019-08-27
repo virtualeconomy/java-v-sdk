@@ -2,14 +2,20 @@ package v.systems.transaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.Getter;
+import lombok.Setter;
 import v.systems.type.Base58Field;
 import v.systems.type.NetworkType;
 import v.systems.type.TransactionType;
 
 public class LeaseTransaction extends ProvenTransaction {
     public final String[] BYTE_SERIALIZED_FIELDS = {"type", "recipient", "amount", "fee", "feeScale", "timestamp"};
+    @Getter
+    @Setter
     @Base58Field
     protected String recipient;
+    @Getter
+    @Setter
     protected Long amount;
 
     public LeaseTransaction() {
@@ -36,21 +42,5 @@ public class LeaseTransaction extends ProvenTransaction {
     @Override
     protected String[] getByteSerializedFields() {
         return BYTE_SERIALIZED_FIELDS;
-    }
-
-    public String getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
-    }
-
-    public Long getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Long amount) {
-        this.amount = amount;
     }
 }

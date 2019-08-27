@@ -1,7 +1,11 @@
 package v.systems.error;
 
-public class VException extends Exception {
+import lombok.Setter;
+import lombok.Getter;
 
+public class VException extends Exception {
+    @Getter
+    @Setter
     private String message;
 
     public VException(String message) {
@@ -12,13 +16,5 @@ public class VException extends Exception {
     public VException() {
         super();
         this.message = "Unexpected error occurred.";
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }
