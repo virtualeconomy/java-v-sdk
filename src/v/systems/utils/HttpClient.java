@@ -5,11 +5,16 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 
 public class HttpClient {
 
     public static String get(String url) throws IOException {
+        return get(url, null);
+    }
+
+    public static String get(String url, Map<String, String> header) throws IOException {
 
         HttpURLConnection con = null;
 
@@ -21,6 +26,11 @@ public class HttpClient {
                 con = (HttpURLConnection) webURL.openConnection();
             }
             con.setRequestMethod("GET");
+            if (header != null) {
+                for (Map.Entry<String, String> entry : header.entrySet()) {
+                    con.setRequestProperty(entry.getKey(), entry.getValue());
+                }
+            }
             return getResponse(con);
         } finally {
             if (con != null) {
@@ -30,6 +40,10 @@ public class HttpClient {
     }
 
     public static String post(String url, String json) throws IOException {
+        return post(url, null, json);
+    }
+
+    public static String post(String url, Map<String, String> header, String json) throws IOException {
 
         HttpURLConnection con = null;
         byte[] postData = json.getBytes(StandardCharsets.UTF_8);
@@ -44,6 +58,11 @@ public class HttpClient {
             con.setDoOutput(true);
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
+            if (header != null) {
+                for (Map.Entry<String, String> entry : header.entrySet()) {
+                    con.setRequestProperty(entry.getKey(), entry.getValue());
+                }
+            }
             try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
                 wr.write(postData);
             }
