@@ -83,11 +83,16 @@ public class Account {
         return getSignature(tx.toBytes());
     }
 
-    public String getSignature(byte[] bytes) throws KeyError {
+    public String getSignature(byte[] context) throws KeyError {
         if (privateKey == null) {
             throw new KeyError("Cannot sign the context. No private key in account.");
         }
-        return Base58.encode(cipher.calculateSignature(this.privateKey, bytes));
+        return Base58.encode(cipher.calculateSignature(this.privateKey, context));
+    }
+
+    public boolean verifySignature(byte[] context, String signature) {
+        byte[] signatureBytes = Base58.decode(signature);
+        return cipher.verifySignature(this.publicKey, context, signatureBytes);
     }
 
     public Long getBalance(Blockchain chain) throws KeyError, IOException, ApiError {
