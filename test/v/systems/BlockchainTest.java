@@ -200,6 +200,7 @@ public class BlockchainTest {
     public void getActiveLeaseTransactions() {
         String testAddress = "AUCJE7djDBbFrgeKRZ4UMREujAeqnD6L6Ph";
         List<Transaction> txList = null;
+        defaultChain.setApiKey(TestConfig.API_KEY);
         try {
             txList = defaultChain.getActiveLeaseTransactions(testAddress);
         } catch (Exception e) {
