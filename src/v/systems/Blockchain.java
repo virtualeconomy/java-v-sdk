@@ -189,6 +189,7 @@ public class Blockchain {
         String url = String.format("%s/consensus/allSlotsInfo", nodeUrl);
         String json = HttpClient.get(url);
         List<SlotInfo> result = new ArrayList<SlotInfo>();
+        Integer height = 0;
         try {
             JsonElement jsonElement = parser.parse(json);
             if (!jsonElement.isJsonArray()) {
@@ -197,10 +198,20 @@ public class Blockchain {
             JsonArray jsonArray = jsonElement.getAsJsonArray();
             for (int i = 0; i < jsonArray.size(); i++) {
                 SlotInfo info = gson.fromJson(jsonArray.get(i), SlotInfo.class);
-                result.add(info);
+                if (info.getHeight() != null) {
+                    height = info.getHeight();
+                }
+                if (info.getAddress() != null) {
+                    result.add(info);
+                }
             }
         } catch (Exception ex) {
             throw ApiError.fromJson(json);
+        }
+        for (SlotInfo info : result) {
+            if (info.getHeight() == null) {
+                info.setHeight(height);
+            }
         }
         return result;
     }

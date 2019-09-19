@@ -61,6 +61,16 @@ Java library for V Systems
     Blockchain chain = new Blockchain(NetworkType.Mainnet, "https://wallet.v.systems/api");
     ```
     
+3. Call node internal used API with API key (to avoid `Provided API key is not correct` error):
+
+    ```java
+    import v.systems.Blockchain;
+    import v.systems.type.NetworkType;
+ 
+    Blockchain chain = new Blockchain(NetworkType.Testnet, "http://test.v.systems:9922", "<API_KEY>");
+    List<Transaction> txList = chain.getActiveLeaseTransactions(testAddress);
+    ```
+    
 ### Create address object
 1. Create account by seed
 
@@ -118,6 +128,30 @@ Java library for V Systems
     ```java
     Long amount = 1 * Blockchain.V_UNITY;  // Lease 1.0 V coin
     LeaseTransaction tx = TransactionFactory.buildLeaseTx("<recipient address>", amount);
+    String txId = tx.getId(); // get Tx ID offline
+    
+    // Usage 1: for hot wallet sending transaction
+    Transaction result = acc.sendTransaction(chain, tx);
+    
+    // Usage 2: for cold wallet signing transaction
+    String signature = acc.getSignature(tx);
+    ```
+    
+3. Send Token by executing contract function
+
+    First of all, if we do not know any Token information, we could get information by `tokenId`
+    
+    ```java
+    ContractType tokenType = chain.getContractTypeByTokenId(tokenId);
+    TokenInfo tokenInfo = chain.getTokenInfo(tokenId);
+    Long tokenUnity = tokenInfo.getUnity();
+    ```
+    
+    Then we send the token by executing contract function
+    
+    ```java
+    Long amount = 1 * tokenUnity;  // Send 1.0 Token
+    ExecuteContractFunctionTransaction tx = TransactionFactory.buildSendTokenTx(tokenId, tokenType,"<recipient address>", amount);
     String txId = tx.getId(); // get Tx ID offline
     
     // Usage 1: for hot wallet sending transaction
