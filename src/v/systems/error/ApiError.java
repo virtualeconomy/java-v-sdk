@@ -1,8 +1,12 @@
 package v.systems.error;
 
+import lombok.Getter;
+import lombok.Setter;
 import v.systems.utils.JsonHelper;
 
 public class ApiError extends VException {
+    @Getter
+    @Setter
     private Integer error;
 
     public ApiError(String message, int errorCode) {
@@ -13,14 +17,6 @@ public class ApiError extends VException {
     public ApiError(String message) {
         super(message);
         this.error = 0;
-    }
-
-    public Integer getError() {
-        return error;
-    }
-
-    public void setError(Integer error) {
-        this.error = error;
     }
 
     public static ApiError fromJson(String json) {

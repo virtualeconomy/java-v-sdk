@@ -25,21 +25,21 @@ public class TransactionParser {
         }
         switch (txType) {
             case Payment:
-                tx = gson.fromJson(json, PaymentTransaction.class);
-                break;
+                return gson.fromJson(json, PaymentTransaction.class);
             case Lease:
-                tx = gson.fromJson(json, LeaseTransaction.class);
-                break;
+                return gson.fromJson(json, LeaseTransaction.class);
             case LeaseCancel:
-                tx = gson.fromJson(json, LeaseCancelTransaction.class);
-                break;
+                return gson.fromJson(json, LeaseCancelTransaction.class);
             case Minting:
-                tx = gson.fromJson(json, MintingTransaction.class);
-                break;
+                return gson.fromJson(json, MintingTransaction.class);
             case ContendSlot:
-                tx = gson.fromJson(json, ContendSlotTransaction.class);
+                return gson.fromJson(json, ContendSlotTransaction.class);
             case ReleaseSlot:
-                tx = gson.fromJson(json, ReleaseSlotTransaction.class);
+                return gson.fromJson(json, ReleaseSlotTransaction.class);
+            case RegisterContract:
+                return gson.fromJson(json, RegisterContractTransaction.class);
+            case ExecuteContractFunction:
+                return gson.fromJson(json, ExecuteContractFunctionTransaction.class);
         }
         return tx;
     }

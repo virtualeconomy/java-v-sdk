@@ -1,6 +1,8 @@
 package v.systems;
 
 import com.google.gson.*;
+import lombok.Getter;
+import v.systems.contract.*;
 import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
 import v.systems.entity.Block;
@@ -19,8 +21,9 @@ import java.util.List;
 
 public class Blockchain {
     public static final long V_UNITY = 100000000L;
-
+    @Getter
     private NetworkType network;
+    @Getter
     private String nodeUrl;
     private Gson gson;
     private JsonParser parser;
@@ -122,6 +125,12 @@ public class Blockchain {
             case ReleaseSlot:
                 url = String.format("%s/spos/broadcast/release", nodeUrl);
                 return this.callChainAPI(url, json, ReleaseSlotTransaction.class);
+            case RegisterContract:
+                url = String.format("%s/contract/broadcast/register", nodeUrl);
+                return this.callChainAPI(url, json, RegisterContractTransaction.class);
+            case ExecuteContractFunction:
+                url = String.format("%s/contract/broadcast/execute", nodeUrl);
+                return this.callChainAPI(url, json, ExecuteContractFunctionTransaction.class);
             default:
                 throw new ApiError("Unsupported Transaction Type");
         }
@@ -165,6 +174,7 @@ public class Blockchain {
         String url = String.format("%s/consensus/allSlotsInfo", nodeUrl);
         String json = HttpClient.get(url);
         List<SlotInfo> result = new ArrayList<SlotInfo>();
+        Integer height = 0;
         try {
             JsonElement jsonElement = parser.parse(json);
             if (!jsonElement.isJsonArray()) {
@@ -173,19 +183,49 @@ public class Blockchain {
             JsonArray jsonArray = jsonElement.getAsJsonArray();
             for (int i = 0; i < jsonArray.size(); i++) {
                 SlotInfo info = gson.fromJson(jsonArray.get(i), SlotInfo.class);
-                result.add(info);
+                if (info.getHeight() != null) {
+                    height = info.getHeight();
+                }
+                if (info.getAddress() != null) {
+                    result.add(info);
+                }
             }
         } catch (Exception ex) {
             throw ApiError.fromJson(json);
         }
+        for (SlotInfo info : result) {
+            if (info.getHeight() == null) {
+                info.setHeight(height);
+            }
+        }
         return result;
     }
 
-    //TODO: implement these functions later
-    // getTokenInfo(String tokenId)
-    // getTokenBalance(String address, String tokenId)
-    // getContractInfo(String contractId)
-    // getContractContent(String contractId)
+    public TokenInfo getTokenInfo(String tokenId) throws IOException, ApiError {
+        String url = String.format("%s/contract/tokenInfo/%s", nodeUrl, tokenId);
+        return this.callChainAPI(url, TokenInfo.class);
+    }
+
+    public ContractType getContractTypeByTokenId(String tokenId) throws IOException, ApiError {
+        String contractId = TokenInfo.getContractId(tokenId);
+        ContractInfo contractInfo = this.getContractInfo(contractId);
+        return contractInfo.getContractType();
+    }
+
+    public TokenBalance getTokenBalance(String address, String tokenId) throws IOException, ApiError {
+        String url = String.format("%s/contract/balance/%s/%s", nodeUrl, address, tokenId);
+        return this.callChainAPI(url, TokenBalance.class);
+    }
+
+    public ContractInfo getContractInfo(String contractId) throws IOException, ApiError {
+        String url = String.format("%s/contract/info/%s", nodeUrl, contractId);
+        return this.callChainAPI(url, ContractInfo.class);
+    }
+
+    public Contract getContractContent(String contractId) throws IOException, ApiError {
+        String url = String.format("%s/contract/content/%s", nodeUrl, contractId);
+        return this.callChainAPI(url, Contract.class);
+    }
 
     private <T> T callChainAPI(String url, Class<T> classType) throws IOException, ApiError {
         String json = HttpClient.get(url);
@@ -213,13 +253,5 @@ public class Blockchain {
         } catch (Exception ex) {
             throw ApiError.fromJson(json);
         }
-    }
-
-    public NetworkType getNetwork() {
-        return network;
-    }
-
-    public String getNodeUrl() {
-        return nodeUrl;
     }
 }

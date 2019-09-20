@@ -1,8 +1,10 @@
 package v.systems.transaction;
 
+import org.bitcoinj.core.Base58;
 import v.systems.error.SerializationError;
 import v.systems.serialization.BytesSerializable;
 import v.systems.type.Base58Field;
+import v.systems.type.SerializedWithSize;
 import v.systems.utils.BytesHelper;
 
 import java.lang.reflect.Field;
@@ -40,14 +42,12 @@ public abstract class BytesSerializableTransaction extends BasicTransaction impl
                 throw new SerializationError(String.format("The value of field '%s' is null", fieldName));
             }
             byte[] bytesArray;
-            if (String.class.isAssignableFrom(field.getType())) {
+            if (BytesSerializable.class.isAssignableFrom(field.getType())){
+                bytesArray = ((BytesSerializable)value).toBytes();
+            } else if (String.class.isAssignableFrom(field.getType())) {
                 Base58Field b58field = field.getAnnotation(Base58Field.class);
                 if (b58field != null) {
-                    if (!b58field.isFixedLength()) {
-                        bytesArray = BytesHelper.serializeBase58WithSize(value.toString(), Short.BYTES);
-                    } else {
-                        bytesArray = BytesHelper.serializeBase58(value.toString());
-                    }
+                    bytesArray = Base58.decode(value.toString());
                 } else {
                     bytesArray = BytesHelper.toBytes(value.toString());
                 }
@@ -60,7 +60,14 @@ public abstract class BytesSerializableTransaction extends BasicTransaction impl
             } else if (Byte.class.isAssignableFrom(field.getType())){
                 bytesArray = BytesHelper.toBytes((Byte)value);
             } else {
-                throw new SerializationError("Unable to Serialized Field: " + fieldName);
+                throw new SerializationError("Unable to serialize type: " + field.getType());
+            }
+            boolean isFieldSerializedWithSize = field.getAnnotation(SerializedWithSize.class) != null;
+            if (isFieldSerializedWithSize) {
+                byte[] len = BytesHelper.toBytes((short)bytesArray.length);
+                for (byte b : len) {
+                    result.add(b);
+                }
             }
             for (byte b : bytesArray) {
                 result.add(b);

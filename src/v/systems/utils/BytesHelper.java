@@ -1,28 +1,32 @@
 package v.systems.utils;
 
-import org.bitcoinj.core.Base58;
-
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BytesHelper {
-    public static byte[] toBytes(Long x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        buffer.putLong(x);
-        return buffer.array();
+
+    public static byte[] toBytes(long x) {
+        byte[] result = new byte[8];
+        for (int i = 7; i >= 0; i--,x >>= 8) {
+            result[i] = (byte)(x & 0xFF);
+        }
+        return result;
     }
 
-    public static byte[] toBytes(Integer x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-        buffer.putInt(x);
-        return buffer.array();
+    public static byte[] toBytes(int x) {
+        byte[] result = new byte[4];
+        for (int i = 3; i >= 0; i--,x >>= 8) {
+            result[i] = (byte)(x & 0xFF);
+        }
+        return result;
     }
 
-    public static byte[] toBytes(Short x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
-        buffer.putShort(x);
-        return buffer.array();
+    public static byte[] toBytes(short x) {
+        byte[] result = new byte[2];
+        result[0] = (byte) (x >> 8);
+        result[1] = (byte) x;
+        return result;
     }
 
     public static byte[] toBytes(Byte x) {
@@ -33,28 +37,20 @@ public class BytesHelper {
         return x.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] serializeBase58(String base58Str) {
-        return Base58.decode(base58Str);
-    }
-
-    public static byte[] serializeBase58WithSize(String base58Str, int byteLengthOfSize) {
-        byte[] b58decode = Base58.decode(base58Str);
-        byte[] intSizeBytes = toBytes(b58decode.length);
-        byte[] sizeBytes = new byte[byteLengthOfSize];
-        for (int i = 1; i <= byteLengthOfSize; i++) {
-            int destOffset = byteLengthOfSize - i;
-            int srcOffset = Integer.BYTES - i;
-            sizeBytes[destOffset] = srcOffset >= 0 ? intSizeBytes[srcOffset] : 0;
-        }
-        return concat(sizeBytes, b58decode);
-    }
-
     public static byte[] toBytes(List<Byte> list) {
         byte[] bytes = new byte[list.size()];
         for (int i = 0 ; i < list.size(); i++) {
             bytes[i] = list.get(i);
         }
         return bytes;
+    }
+
+    public static List<Byte> toList(byte[] bytes) {
+        List<Byte> list = new ArrayList<Byte>();
+        for (byte b : bytes) {
+            list.add(b);
+        }
+        return list;
     }
 
     public static String toHex(byte[] bytes) {
@@ -77,6 +73,14 @@ public class BytesHelper {
         byte[] result = new byte[a.length + b.length];
         System.arraycopy(a, 0, result, 0, a.length);
         System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
+
+    public static byte[] concat(byte[][] arr) {
+        byte[] result = new byte[0];
+        for (byte[] bs : arr) {
+            result = concat(result, bs);
+        }
         return result;
     }
 }

@@ -16,10 +16,10 @@ import v.systems.serialization.BytesSerializable;
 import v.systems.transaction.*;
 import v.systems.type.NetworkType;
 import v.systems.type.TransactionType;
+import v.systems.utils.BytesHelper;
 import v.systems.utils.Hash;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -83,11 +83,16 @@ public class Account {
         return getSignature(tx.toBytes());
     }
 
-    public String getSignature(byte[] bytes) throws KeyError {
+    public String getSignature(byte[] context) throws KeyError {
         if (privateKey == null) {
             throw new KeyError("Cannot sign the context. No private key in account.");
         }
-        return Base58.encode(cipher.calculateSignature(this.privateKey, bytes));
+        return Base58.encode(cipher.calculateSignature(this.privateKey, context));
+    }
+
+    public boolean verifySignature(byte[] context, String signature) {
+        byte[] signatureBytes = Base58.decode(signature);
+        return cipher.verifySignature(this.publicKey, context, signatureBytes);
     }
 
     public Long getBalance(Blockchain chain) throws KeyError, IOException, ApiError {
@@ -173,12 +178,15 @@ public class Account {
     }
 
     public static byte[] getAddress(byte[] publicKey, byte networkByte) {
-        ByteBuffer buf = ByteBuffer.allocate(26);
         byte[] hash = Hash.secureHash(publicKey);
-        buf.put(ADDR_VERSION).put(networkByte).put(hash, 0, 20);
-        byte[] checksum = Hash.secureHash(buf.array(), 0, 22);
-        buf.put(checksum, 0, 4);
-        return buf.array();
+        byte[] addressWithoutChecksum = new byte[22];
+        addressWithoutChecksum[0] = ADDR_VERSION;
+        addressWithoutChecksum[1] = networkByte;
+        System.arraycopy(hash, 0, addressWithoutChecksum, 2 ,20);
+        byte[] checksumHash = Hash.secureHash(addressWithoutChecksum);
+        byte[] checksum = new byte[4];
+        System.arraycopy(checksumHash, 0, checksum, 0 ,4);
+        return BytesHelper.concat(addressWithoutChecksum, checksum);
     }
 
     public boolean checkAddress() {
@@ -197,9 +205,8 @@ public class Account {
         if (address.length != 26 || address[0] != ADDR_VERSION || address[1] != network.toByte()) {
             return false;
         }
-        ByteBuffer buf = ByteBuffer.allocate(22);
-        buf.put(address, 22, 4);
-        byte[] expectedChecksum = buf.array();
+        byte[] expectedChecksum = new byte[4];
+        System.arraycopy(address, 22, expectedChecksum, 0 ,4);
         byte[] actualChecksum = Hash.secureHash(address, 0, 22);
         for (int i = 0; i < 4; i++) {
             if (expectedChecksum[i] != actualChecksum[i]) {
