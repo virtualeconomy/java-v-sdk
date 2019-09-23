@@ -2,6 +2,7 @@ package v.systems;
 
 import com.google.gson.*;
 import lombok.Getter;
+import lombok.Setter;
 import v.systems.contract.*;
 import v.systems.entity.Balance;
 import v.systems.entity.BalanceDetail;
@@ -17,7 +18,9 @@ import v.systems.utils.JsonHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Blockchain {
     public static final long V_UNITY = 100000000L;
@@ -25,6 +28,9 @@ public class Blockchain {
     private NetworkType network;
     @Getter
     private String nodeUrl;
+    @Getter
+    @Setter
+    private String apiKey;
     private Gson gson;
     private JsonParser parser;
 
@@ -33,6 +39,11 @@ public class Blockchain {
         this.nodeUrl = nodeUrl;
         gson = JsonHelper.getGsonInstance();
         parser = JsonHelper.getParserInstance();
+    }
+
+    public Blockchain(NetworkType network, String nodeUrl, String apiKey) {
+        this(network, nodeUrl);
+        this.apiKey = apiKey;
     }
 
     public Long getBalance(String address) throws IOException, ApiError {
@@ -48,7 +59,7 @@ public class Blockchain {
 
     public List<Transaction> getActiveLeaseTransactions(String address) throws IOException, ApiError {
         String url = String.format("%s/transactions/activeLeaseList/%s", nodeUrl, address);
-        return this.getTransactionByUrl(url);
+        return this.getTransactionByUrl(url, true);
     }
 
     public List<Transaction> getTransactionHistory(String address, int num) throws IOException, ApiError {
@@ -56,12 +67,16 @@ public class Blockchain {
             return new ArrayList<Transaction>();
         }
         String url = String.format("%s/transactions/address/%s/limit/%d", nodeUrl, address, num);
-        return this.getTransactionByUrl(url);
+        return this.getTransactionByUrl(url, false);
     }
 
-    private List<Transaction> getTransactionByUrl(String url) throws IOException, ApiError {
+    private List<Transaction> getTransactionByUrl(String url, boolean useApiKey) throws IOException, ApiError {
         List<Transaction> result = new ArrayList<Transaction>();
-        String json = HttpClient.get(url);
+        Map<String, String> header = new HashMap<String, String>();
+        if (useApiKey && this.apiKey != null) {
+            header.put("api_key", this.apiKey);
+        }
+        String json = HttpClient.get(url, header);
         try {
             JsonElement jsonElement = parser.parse(json);
             if (!jsonElement.isJsonArray()) {
