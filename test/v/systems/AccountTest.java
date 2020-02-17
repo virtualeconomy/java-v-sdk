@@ -47,6 +47,25 @@ public class AccountTest {
     }
 
     @Test
+    public void createAccountWithPrivateKey() throws KeyError {
+        Account acc = new Account(NetworkType.Mainnet, "6xW5vo8vcG153QEJ7Rnam1x6QLJugrbyTjYN2txWEBVR");
+        Assert.assertEquals("Public Key Generation is wrong", "EJqSddw7JRvTkNTPkddWCmboa7rbQD8f4LAqngfhb6Hw", acc.getPublicKey());
+        Assert.assertEquals("Address Generation is wrong", "ARJGXkS7nxK3TaYMQxvWs7WahwR2NJMQFBW", acc.getAddress());
+
+        Account acc2 = new Account(NetworkType.Mainnet, "4pc9Koxm3XPVEAx7Vp9TcdRgbtdsWUFye5Ng78D9Lkxh");
+        Assert.assertEquals("Public Key Generation is wrong", "HQGZrkdzZiGkD9RwBhDXiZzNqRJiiWqvViJSxcyGnPhV", acc2.getPublicKey());
+        Assert.assertEquals("Address Generation is wrong", "AR4U6sFGSzH8XCHHjMU8Y9PAU9j8khXxy5B", acc2.getAddress());
+
+        Account acc3 = new Account(NetworkType.Testnet, "3ATdWjpXAfdhd6fCjGk8w7iQhezNz6DDNSELDa9B5KVC");
+        Assert.assertEquals("Public Key Generation is wrong", "2Mnu6jZxedY4eJ75Xt27YwSjrpug5X5f5N31GnW6rfPG", acc3.getPublicKey());
+        Assert.assertEquals("Address Generation is wrong", "AUC89jnZnmGeNp3gLBcBofNC3e4u3DV4fxp", acc3.getAddress());
+
+        Account acc4 = new Account(NetworkType.Testnet, "G8mgPMSKCsxXxQRTU3npQyQW72sy3g8rMiTEKwsEHaSU");
+        Assert.assertEquals("Public Key Generation is wrong", "3iBXXgXjwyXWZqyprCaQv9q66L4UzLji2Gv9sgX6nNoN", acc4.getPublicKey());
+        Assert.assertEquals("Address Generation is wrong", "ATwncwd63jAqF6B2NH8Zs2giMHgzXPSBtBk", acc4.getAddress());
+    }
+
+    @Test
     public void getSignature() throws VException {
         Long amount = (long)(1.5 * Blockchain.V_UNITY);
         PaymentTransaction tx = TransactionFactory.buildPaymentTx("AU83FKKzTYCue5ZQPweCzJ68dQE4HtdMv5U", amount);
